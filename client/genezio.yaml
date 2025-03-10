@@ -1,0 +1,18 @@
+# O nome do projeto.
+name: material-dashboard-react
+# A região onde o projeto está implantado.
+region: us-east-1
+# A versão da configuração YAML do Genezio a ser analisada.
+yamlVersion: 2
+# Informações sobre o frontend, incluindo o caminho, a linguagem e o diretório de publicação.
+# É opcional. Também pode ser um array se houver vários frontends para implantar.
+frontend:
+  # A pasta onde os scripts do frontend serão executados.
+  path: ./
+  # O diretório que será publicado no CDN. É relativo ao caminho definido.
+  publish: ./build
+  scripts:
+    # Lista de scripts que constroem o frontend antes da implantação. Deve preencher o diretório `publish` especificado.
+    build: npm run build
+    # Lista de scripts para executar antes de implantar o frontend.
+    deploy: npm install

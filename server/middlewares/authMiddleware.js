@@ -1,0 +1,28 @@
+const jwt = require("jsonwebtoken");
+
+const authMiddleware = (roles = []) => {
+  return (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({ error: "Token não fornecido" });
+    }
+
+    const token = authHeader.split(" ")[1]; // Exemplo: "Bearer token"
+
+    jwt.verify(token, process.env.JWT_SECRET || "secreta", (err, user) => {
+      if (err) {
+        return res.status(403).json({ error: "Token inválido" });
+      }
+
+      if (roles.length && !roles.includes(user.role)) {
+        return res.status(403).json({ error: "Acesso negado" });
+      }
+
+      req.user = user;
+      next();
+    });
+  };
+};
+
+module.exports = authMiddleware;
