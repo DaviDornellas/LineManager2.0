@@ -54,7 +54,7 @@ function Billing() {
                     icon="payment"
                     title="Valor"
                     description="Valor pago por linha"
-                    value="$455.00"
+                    value="R$55,00"
                   />
                 </Grid>
                 <Grid item xs={12} md={6} xl={3}>
@@ -62,15 +62,7 @@ function Billing() {
                     icon="payments"
                     title="Valor Total"
                     description="Valor total "
-                    value="+$2000"
-                  />
-                </Grid>
-                <Grid item xs={12} md={6} xl={3}>
-                  <DefaultInfoCard
-                    icon="paypal"
-                    title="Valor"
-                    description="Valor pago por linha"
-                    value="$455.00"
+                    value="+R$110.000"
                   />
                 </Grid>
                 <Grid item xs={12}>

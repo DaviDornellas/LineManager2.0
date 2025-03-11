@@ -9,7 +9,7 @@ const secretKey = process.env.JWT_SECRET || 'secreta'; // Substitua pela sua cha
 
 router.post("/register", async (req, res) => {
   try {
-    const { username, position, email, password, role } = req.body;
+    const { username, position, location, email, password, role } = req.body;
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
@@ -22,6 +22,7 @@ router.post("/register", async (req, res) => {
       username,
       position,
       email,
+      location,
       password: hashedPassword,
       role
 
@@ -82,6 +83,7 @@ router.get("/me", async (req, res) => {
       res.json({
         username: user.username,
         position: user.position,
+        location: user.location,
         email: user.email,
         
         

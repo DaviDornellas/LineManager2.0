@@ -30,6 +30,7 @@ function Cover() {
   // Estados do formulário
   const [username, setUsername] = useState("");
   const [position, setPosition] = useState("");
+  const [location, setLocation] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
@@ -46,6 +47,7 @@ function Cover() {
       await axios.post("http://localhost:5000/api/auth/register", {
         username,
         position,
+        location,
         email,
         password,
         role,
@@ -76,10 +78,10 @@ function Cover() {
           textAlign="center"
         >
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Join us today
+            Junte-se a nós hoje
           </MDTypography>
           <MDTypography display="block" variant="button" color="white" my={1}>
-            Enter your details to register
+            Insira seus dados para se registrar
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
@@ -92,7 +94,7 @@ function Cover() {
             <MDBox mb={2}>
               <MDInput
                 type="text"
-                label="Username"
+                label="Nome Completo"
                 fullWidth
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -102,10 +104,20 @@ function Cover() {
             <MDBox mb={2}>
               <MDInput
                 type="text"
-                label="Position"
+                label="Cargo"
                 fullWidth
                 value={position}
                 onChange={(e) => setPosition(e.target.value)}
+                required
+              />
+            </MDBox>
+            <MDBox mb={2}>
+              <MDInput
+                type="text"
+                label="Origem: Ex A381"
+                fullWidth
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
                 required
               />
             </MDBox>
@@ -122,7 +134,7 @@ function Cover() {
             <MDBox mb={2}>
               <MDInput
                 type="password"
-                label="Password"
+                label="Senha"
                 fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

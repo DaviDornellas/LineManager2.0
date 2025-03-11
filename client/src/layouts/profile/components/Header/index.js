@@ -19,7 +19,7 @@ import MDAvatar from "components/MDAvatar";
 import breakpoints from "assets/theme/base/breakpoints";
 
 // Images
-import backgroundImage from "assets/images/bg-profile.jpeg";
+import backgroundImage from "assets/images/_grupoaterpa-ponte-anita-garibaldi-br-101-laguna-sc.jpg";
 
 // Páginas
 import AppPage from "../AppPage/AppPage"; // Importando a página do app
@@ -52,6 +52,7 @@ function Header({ children }) {
         setUser({
           username: response.data.username,
           position: response.data.position,
+          location: response.data.location,
           role: response.data.role,
           avatar: response.data.avatar || "assets/images/default-avatar.png",
         });
@@ -74,8 +75,7 @@ function Header({ children }) {
         borderRadius="xl"
         sx={{
           backgroundImage: ({ functions: { rgba, linearGradient }, palette: { gradients } }) =>
-            `${linearGradient(rgba(gradients.info.main, 0.6), rgba(gradients.info.state, 0.6))},
-              url(${backgroundImage})`,
+            `url(${backgroundImage})`,
           backgroundSize: "cover",
           backgroundPosition: "50%",
           overflow: "hidden",
@@ -92,7 +92,7 @@ function Header({ children }) {
                 {user.username}
               </MDTypography>
               <MDTypography variant="button" color="text" fontWeight="regular">
-                {user.position}
+                {user.position}-{user.location}
               </MDTypography>
             </MDBox>
           </Grid>

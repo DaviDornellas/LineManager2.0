@@ -58,13 +58,12 @@ function Profile() {
             <Grid item xs={12} md={6} xl={4} sx={{ display: "flex" }}>
               <Divider orientation="vertical" sx={{ ml: -2, mr: 1 }} />
               <ProfileInfoCard
-                title="Profile Information"
-                description={`Hi, I'm ${user.username}`}
+                title="Informações pessoais"
+                description={`Oi, eu sou ${user.username}`}
                 info={{
-                  fullName: user.username,
+                  Nome: user.username,
                   email: user.email,
-                  position: user.position || "Not Available",
-                  role: user.role || "Not Available",
+                  Cargo: user.position || "Not Available",
                   location: user.location || "Not Available",
                 }}
                 social={[
