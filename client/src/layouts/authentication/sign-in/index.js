@@ -23,7 +23,10 @@ import MDButton from "components/MDButton";
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
-import bgImage from "assets/images/_grupoaterpa-ponte-anita-garibaldi-br-101-laguna-sc.jpg";
+import bgImage from "assets/images/grupoaterpa-intercessao.jpg";
+import agImage from "assets/images/_grupoaterpa-ponte-anita-garibaldi-br-101-laguna-sc.jpg";
+import cgImage from "assets/images/grupoaterpa-aeroporto-de-capelinha.jpg";
+import lgImage from "assets/images/logo-ct.png";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -47,44 +50,30 @@ function Login() {
       // Redireciona para o dashboard
       navigate("/dashboard");
     } catch (error) {
-      setErrorMessage("Invalid email or password. Please try again.");
+      setErrorMessage("Email ou Senha incorretos.");
     }
   };
 
   return (
-    <BasicLayout image={bgImage}>
+    <BasicLayout image={agImage}>
       <Card>
         <MDBox
           variant="gradient"
-          bgColor="info"
+          bgColor="infog"
           borderRadius="lg"
-          coloredShadow="info"
+          coloredShadow="infog"
           mx={2}
           mt={-3}
           p={2}
           mb={1}
           textAlign="center"
         >
-          <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Entrar
+          <MDBox mt={3}>
+            <img src={lgImage} alt="Logo Aterpa" width="170px" />
+          </MDBox>
+          <MDTypography color="error" variant="body2" textAlign="center">
+            Este é um ambiente de teste.
           </MDTypography>
-          <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
-            <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <FacebookIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-            <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <GitHubIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-            <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                <GoogleIcon color="inherit" />
-              </MDTypography>
-            </Grid>
-          </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form" onSubmit={handleLogin}>
@@ -124,13 +113,13 @@ function Login() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton type="submit" variant="gradient" color="info" fullWidth>
-                Sign in
+              <MDButton type="submit" variant="gradient" color="infog" fullWidth>
+                Entrar
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
-                Don&apos;t have an account?{" "}
+                Não tem uma conta?{" "}
                 <MDTypography
                   component={Link}
                   to="/authentication/sign-up"

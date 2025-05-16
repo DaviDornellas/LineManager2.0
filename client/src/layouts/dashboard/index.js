@@ -8,18 +8,12 @@ import MDBox from "components/MDBox";
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
-
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
-import Projects from "layouts/dashboard/components/Projects";
+import AddLine from "layouts/dashboard/components/AddLine";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import api from "../../service/index"; // Importando API
 
 function Dashboard() {
-  const { sales, tasks } = reportsLineChartData;
   const [totalLinhas, setTotalLinhas] = useState(0);
   const [habilitadas, setHabilitadas] = useState(0);
   const [desabilitadas, setDesabilitadas] = useState(0);
@@ -44,12 +38,12 @@ function Dashboard() {
     };
 
     fetchData();
-  }, []);
+  }, [totalLinhas]); // Apenas totalLinhas como dependência
 
-  const calcularPorcentagem = (atual, anterior) => {
-    if (anterior === 0) return "0%";
-    const diferenca = ((atual - anterior) / anterior) * 100;
-    return `${diferenca.toFixed(1)}%`;
+  const calcularPorcentagem = (parte, total) => {
+    if (total === 0) return "0%";
+    const porcentagem = (parte / total) * 100;
+    return `${porcentagem.toFixed(1)}%`;
   };
 
   const handleProductAdd = (produto) => {
@@ -62,9 +56,10 @@ function Dashboard() {
       <DashboardNavbar />
       <MDBox py={3}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid item xs={12} md={6} lg={4}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
+                color="infog"
                 icon="leaderboard"
                 title="Total de Linhas"
                 count={totalLinhas}
@@ -76,7 +71,7 @@ function Dashboard() {
               />
             </MDBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid item xs={12} md={6} lg={4}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="success"
@@ -85,13 +80,13 @@ function Dashboard() {
                 count={habilitadas}
                 percentage={{
                   color: "success",
-                  amount: calcularPorcentagem(habilitadas, prevTotalLinhas / 2),
-                  label: "desde a última atualização",
+                  amount: calcularPorcentagem(habilitadas, totalLinhas),
+                  label: " do total de linhas",
                 }}
               />
             </MDBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid item xs={12} md={6} lg={4}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="primary"
@@ -100,58 +95,17 @@ function Dashboard() {
                 count={desabilitadas}
                 percentage={{
                   color: "success",
-                  amount: calcularPorcentagem(desabilitadas, prevTotalLinhas / 2),
-                  label: "desde a última atualização",
+                  amount: calcularPorcentagem(desabilitadas, totalLinhas),
+                  label: " do total de linhas",
                 }}
               />
             </MDBox>
           </Grid>
         </Grid>
-        <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsBarChart
-                  color="info"
-                  title="Usuarios Ativos"
-                  description="Desempenho da última campanha"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="success"
-                  title="Linhas Cadastradas"
-                  description={
-                    <>
-                      (<strong>+15%</strong>) aumento nas linhas hoje.
-                    </>
-                  }
-                  date="updated 4 min ago"
-                  chart={sales}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="dark"
-                  title="Obras cadastradas"
-                  description="Desempenho da última campanha"
-                  date="just updated"
-                  chart={tasks}
-                />
-              </MDBox>
-            </Grid>
-          </Grid>
-        </MDBox>
         <MDBox>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={8}>
-              <Projects onProductAdd={handleProductAdd} />
+              <AddLine onProductAdd={handleProductAdd} />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <OrdersOverview />

@@ -20,6 +20,7 @@ import breakpoints from "assets/theme/base/breakpoints";
 
 // Images
 import backgroundImage from "assets/images/_grupoaterpa-ponte-anita-garibaldi-br-101-laguna-sc.jpg";
+import backgroundImage1 from "assets/images/grupoaterpaviadutoeng04.jpg";
 
 // Páginas
 import AppPage from "../AppPage/AppPage"; // Importando a página do app

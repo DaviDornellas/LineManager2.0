@@ -61,6 +61,11 @@ const colors = {
     focus: "#1662C4",
   },
 
+  infog: {
+    main: "#a3a3a3",
+    focus: "#a3a3a3",
+  },
+
   success: {
     main: "#4CAF50",
     focus: "#67bb6a",
@@ -112,6 +117,11 @@ const colors = {
     info: {
       main: "#49a3f1",
       state: "#1A73E8",
+    },
+
+    infog: {
+      main: "#a3a3a3",
+      focus: "#a3a3a3",
     },
 
     success: {
@@ -218,6 +228,11 @@ const colors = {
       text: "#095bc6",
     },
 
+    infog: {
+      main: "#a3a3a3",
+      focus: "#a3a3a3",
+    },
+
     success: {
       background: "#bce2be",
       text: "#339537",
@@ -248,6 +263,7 @@ const colors = {
     primary: "#e91e62",
     secondary: "#110e0e",
     info: "#00bbd4",
+    infog: "#a3a3a3",
     success: "#4caf4f",
     warning: "#ff9900",
     error: "#f44336",

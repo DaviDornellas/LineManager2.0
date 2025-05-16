@@ -5,19 +5,10 @@ import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
-import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
-import Projects from "layouts/dashboard/components/Projects";
-import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import api from "../../service/index"; // Importando API
-import LinesTableData from "layouts/dashboard/data/LinesTableData";
+import LinesTableData from "layouts/tablelines/data/LinesTableData";
 
 function Dashboard() {
-  const { sales, tasks } = reportsLineChartData;
   const [totalLinhas, setTotalLinhas] = useState(0);
   const [habilitadas, setHabilitadas] = useState(0);
   const [desabilitadas, setDesabilitadas] = useState(0);
@@ -68,9 +59,9 @@ function Dashboard() {
                 py={3}
                 px={2}
                 variant="gradient"
-                bgColor="info"
+                bgColor="infog"
                 borderRadius="lg"
-                coloredShadow="info"
+                coloredShadow="infog"
               >
                 <MDTypography variant="h6" color="white">
                   Linhas

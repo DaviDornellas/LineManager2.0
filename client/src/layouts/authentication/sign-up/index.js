@@ -22,7 +22,9 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
-import bgImage from "assets/images/_grupoaterpa-ponte-anita-garibaldi-br-101-laguna-sc.jpg";
+import bgImage1 from "assets/images/_grupoaterpa-ponte-anita-garibaldi-br-101-laguna-sc.jpg";
+import bgImage from "assets/images/grupoaterpaviadutoeng04.jpg";
+import lgImage from "assets/images/logo-ct.png";
 
 function Cover() {
   const navigate = useNavigate();
@@ -68,9 +70,9 @@ function Cover() {
       <Card>
         <MDBox
           variant="gradient"
-          bgColor="info"
+          bgColor="infog"
           borderRadius="lg"
-          coloredShadow="success"
+          coloredShadow="cdcdcd"
           mx={2}
           mt={-3}
           p={3}
@@ -153,6 +155,8 @@ function Cover() {
                 >
                   <MenuItem value="user">User</MenuItem>
                   <MenuItem value="admin">Admin</MenuItem>
+                  <MenuItem value="reader">Leitor</MenuItem>
+                  <MenuItem value="editor">Editor</MenuItem>
                 </Select>
               </FormControl>
             </MDBox>
@@ -160,16 +164,16 @@ function Cover() {
               <MDButton
                 type="submit"
                 variant="gradient"
-                color="info"
+                color="infog"
                 fullWidth
                 disabled={isLoading}
               >
-                {isLoading ? "Cadastrando..." : "Sign Up"}
+                {isLoading ? "Cadastrando..." : "Cadastrar"}
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
-                Already have an account?{" "}
+                Já tem uma conta?{" "}
                 <MDTypography
                   component={Link}
                   to="/authentication/sign-in"

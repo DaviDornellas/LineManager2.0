@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/nextjs-material-dashboard-pro
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 function configs(labels, datasets) {
   return {
     data: {
@@ -59,6 +44,9 @@ function configs(labels, datasets) {
             display: true,
             color: "#f8f9fa",
             padding: 10,
+            callback: function (value) {
+              return value >= 1000 ? `${(value / 1000).toFixed(0)} mil` : value;
+            },
             font: {
               size: 14,
               weight: 300,

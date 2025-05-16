@@ -1,34 +1,21 @@
+import { green, purple } from "@mui/material/colors";
 /**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-/**
- * The base colors for the Material Dashboard 2 React.
- * You can add new color using this file.
- * You can customized the colors for the entire Material Dashboard 2 React using thie file.
+ * As cores base para o Material Dashboard 2 React.
+ * Você pode adicionar novas cores usando este arquivo.
+ * Você pode personalizar as cores para todo o Material Dashboard 2 React usando este arquivo.
  */
 
 const colors = {
+  // Cores de fundo
   background: {
     default: "#f0f2f5",
   },
-
+  // Cores de texto
   text: {
     main: "#7b809a",
     focus: "#7b809a",
   },
-
+  // Cores básicas
   transparent: {
     main: "transparent",
   },
@@ -44,6 +31,27 @@ const colors = {
     focus: "#000000",
   },
 
+  purple: {
+    main: "#67019a",
+    focus: "#67019a",
+  },
+
+  red: {
+    main: "#ce1d22",
+    focus: "#ce1d22",
+  },
+
+  blue: {
+    main: "#0c3d85",
+    focus: "#0c3d85",
+  },
+
+  green: {
+    main: "#51b749",
+    focus: "#51b749",
+  },
+
+  // Cores principais
   primary: {
     main: "#e91e63",
     focus: "#e91e63",
@@ -57,6 +65,16 @@ const colors = {
   info: {
     main: "#1A73E8",
     focus: "#1662C4",
+  },
+
+  infog: {
+    main: "#a3a3a3",
+    focus: "#a3a3a3",
+  },
+
+  infod: {
+    main: "#67019a",
+    focus: "#67019a",
   },
 
   success: {
@@ -84,6 +102,7 @@ const colors = {
     focus: "#2c3c58",
   },
 
+  // Tons de cinza
   grey: {
     100: "#f8f9fa",
     200: "#f0f2f5",
@@ -96,46 +115,21 @@ const colors = {
     900: "#212529",
   },
 
+  // Gradientes
   gradients: {
-    primary: {
-      main: "#EC407A",
-      state: "#D81B60",
-    },
-
-    secondary: {
-      main: "#747b8a",
-      state: "#495361",
-    },
-
-    info: {
-      main: "#49a3f1",
-      state: "#1A73E8",
-    },
-
-    success: {
-      main: "#66BB6A",
-      state: "#43A047",
-    },
-
-    warning: {
-      main: "#FFA726",
-      state: "#FB8C00",
-    },
-
-    error: {
-      main: "#EF5350",
-      state: "#E53935",
-    },
-
-    light: {
-      main: "#EBEFF4",
-      state: "#CED4DA",
-    },
-
-    dark: {
-      main: "#42424a",
-      state: "#191919",
-    },
+    primary: { main: "#EC407A", state: "#D81B60" },
+    secondary: { main: "#747b8a", state: "#495361" },
+    info: { main: "#49a3f1", state: "#1A73E8" },
+    infog: { main: "#a3a3a3", state: "#a3a3a3" },
+    success: { main: "#66BB6A", state: "#43A047" },
+    warning: { main: "#FFA726", state: "#FB8C00" },
+    error: { main: "#EF5350", state: "#E53935" },
+    light: { main: "#EBEFF4", state: "#CED4DA" },
+    dark: { main: "#42424a", state: "#191919" },
+    purple: { main: "#67019a", state: "#67019a" },
+    red: { main: "#ce1d22", state: "#ce1d22" },
+    blue: { main: "#0c3d85", state: "#0c3d85" },
+    green: { main: "#51b749", state: "#51b749" },
   },
 
   socialMediaColors: {
@@ -216,6 +210,11 @@ const colors = {
       text: "#095bc6",
     },
 
+    infog: {
+      background: "#a3a3a3",
+      focus: "#a3a3a3",
+    },
+
     success: {
       background: "#bce2be",
       text: "#339537",
@@ -240,17 +239,43 @@ const colors = {
       background: "#8097bf",
       text: "#1e2e4a",
     },
+
+    purple: {
+      background: "#67019a",
+      text: "#67019a",
+    },
+
+    red: {
+      background: "#ce1d22",
+      text: "#ce1d22",
+    },
+
+    blue: {
+      background: "#0c3d85",
+      text: "#0c3d85",
+    },
+
+    green: {
+      background: "#51b749",
+      text: "#51b749",
+    },
   },
 
+  // Cores de sombra
   coloredShadows: {
     primary: "#e91e62",
     secondary: "#110e0e",
     info: "#00bbd4",
+    infog: "#a3a3a3",
     success: "#4caf4f",
     warning: "#ff9900",
     error: "#f44336",
     light: "#adb5bd",
     dark: "#404040",
+    purple: "#67019a",
+    red: "#ce1d22",
+    blue: "#0c3d85",
+    green: "#51b749",
   },
 
   inputBorderColor: "#d2d6da",

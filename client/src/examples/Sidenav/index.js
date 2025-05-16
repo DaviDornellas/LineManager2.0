@@ -69,11 +69,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }, [dispatch, location]);
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
-    let returnValue;
+  const renderRoutes = routes.map((route) => {
+    const { type, name, icon, title, noCollapse, key, href, route: path, collapse } = route;
 
     if (type === "collapse") {
-      returnValue = href ? (
+      return href ? (
         <Link
           href={href}
           key={key}
@@ -89,12 +89,46 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           />
         </Link>
       ) : (
-        <NavLink key={key} to={route}>
+        <NavLink key={key} to={path}>
           <SidenavCollapse name={name} icon={icon} active={key === collapseName} />
         </NavLink>
       );
-    } else if (type === "title") {
-      returnValue = (
+    }
+
+    if (type === "group") {
+      return (
+        <SidenavCollapse key={key} name={name} icon={icon} active={false}>
+          {collapse?.map((child) =>
+            child.href ? (
+              <Link
+                href={child.href}
+                key={child.key}
+                target="_blank"
+                rel="noreferrer"
+                sx={{ textDecoration: "none" }}
+              >
+                <SidenavCollapse
+                  name={child.name}
+                  icon={child.icon}
+                  active={child.key === collapseName}
+                />
+              </Link>
+            ) : (
+              <NavLink key={child.key} to={child.route}>
+                <SidenavCollapse
+                  name={child.name}
+                  icon={child.icon}
+                  active={child.key === collapseName}
+                />
+              </NavLink>
+            )
+          )}
+        </SidenavCollapse>
+      );
+    }
+
+    if (type === "title") {
+      return (
         <MDTypography
           key={key}
           color={textColor}
@@ -110,8 +144,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           {title}
         </MDTypography>
       );
-    } else if (type === "divider") {
-      returnValue = (
+    }
+
+    if (type === "divider") {
+      return (
         <Divider
           key={key}
           light={
@@ -122,7 +158,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       );
     }
 
-    return returnValue;
+    return null;
   });
 
   return (
@@ -146,15 +182,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           </MDTypography>
         </MDBox>
         <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="2rem" />}
+          {brand && <MDBox component="img" src={brand} alt="Brand" width="11rem" />}
           <MDBox
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
-          >
-            <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
-              {brandName}
-            </MDTypography>
-          </MDBox>
+          ></MDBox>
         </MDBox>
       </MDBox>
       <Divider

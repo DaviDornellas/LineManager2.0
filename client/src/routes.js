@@ -1,19 +1,4 @@
 /**
-==========================================================
-* Material Dashboard 2 React - v2.2.0
-=============================================================
-
-* Página do produto: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Codificado por www.creative-tim.com
-
-==========================================================
-
-* O aviso de direitos autorais acima e este aviso de permissão devem ser incluídos em todas as cópias ou partes substanciais do Software.
-*/
-
-/**
 Todas as rotas para o Material Dashboard 2 React são adicionadas aqui,
 Você pode adicionar uma nova rota, personalizar as rotas e excluí-las aqui.
 
@@ -37,6 +22,7 @@ dentro (rotas aninhadas), você precisa passar as rotas aninhadas dentro de uma 
 
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
+import Division from "layouts/division";
 import Tablelines from "layouts/tablelines";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
@@ -44,51 +30,130 @@ import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Editline from "layouts/editline";
+import Report from "layouts/report";
+import Cati from "layouts/GAATI/C.A.T.I";
+import Compor from "layouts/GAATI/90compor";
+import Consultar from "layouts/GAATI/consultar";
+import Senhavpn from "layouts/GAATI/senha-vpn";
+import Primavera from "layouts/GAATI/primavera";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
 
 const routes = [
   {
-    type: "collapse",
-    name: "Painel",
-    key: "dashboard",
-    icon: <Icon fontSize="small">dashboard</Icon>,
-    route: "/dashboard",
-    component: <Dashboard />,
+    type: "group",
+    name: "SGL",
+    key: "SGL",
+    icon: <Icon fontSize="small">folder</Icon>,
+    collapse: [
+      {
+        type: "collapse",
+        name: "Painel",
+        key: "dashboard",
+        icon: <Icon fontSize="small">dashboard</Icon>,
+        route: "/dashboard",
+        component: <Dashboard />,
+      },
+      {
+        type: "collapse",
+        name: "Editar Linha",
+        key: "editline",
+        icon: <Icon fontSize="small">edit</Icon>,
+        route: "/editline",
+        component: <Editline />,
+      },
+      {
+        type: "collapse",
+        name: "Linhas",
+        key: "tablelines",
+        icon: <Icon fontSize="small">table_view</Icon>,
+        route: "/tablelines",
+        component: <Tablelines />,
+      },
+      {
+        type: "collapse",
+        name: "Obras",
+        key: "division",
+        icon: <Icon fontSize="small">add_home_work</Icon>,
+        route: "/division",
+        component: <Division />,
+      },
+      {
+        type: "collapse",
+        name: "Finanças",
+        key: "billing",
+        icon: <Icon fontSize="small">receipt_long</Icon>,
+        route: "/billing",
+        component: <Billing />,
+      },
+      {
+        type: "collapse",
+        name: "Relatórios",
+        key: "report",
+        icon: <Icon fontSize="small">description</Icon>,
+        route: "/report",
+        component: <Report />,
+      },
+    ],
   },
   {
-    type: "collapse",
-    name: "Linhas",
-    key: "Tablelines",
-    icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/Tablelines",
-    component: <Tablelines />,
+    type: "group",
+    name: "GAATI",
+    key: "GAATI",
+    icon: <Icon fontSize="small">folder</Icon>,
+    collapse: [
+      {
+        type: "collapse",
+        name: "C.A.T.I",
+        key: "C.A.T.I",
+        icon: <Icon fontSize="small">dashboard</Icon>,
+        route: "/C.A.T.I",
+        component: <Cati />,
+      },
+      {
+        type: "collapse",
+        name: "90 Compor",
+        key: "90 compor",
+        icon: <Icon fontSize="small">person_add</Icon>,
+        route: "/90Compor",
+        component: <Compor />,
+      },
+      {
+        type: "collapse",
+        name: "Primavera",
+        key: "Primavera",
+        icon: <Icon fontSize="small">person_add</Icon>,
+        route: "/primavera",
+        component: <Primavera />,
+      },
+      {
+        type: "collapse",
+        name: "Senhavpn",
+        key: "Senhavpn",
+        icon: <Icon fontSize="small">https</Icon>,
+        route: "/Senha-vpn",
+        component: <Senhavpn />,
+      },
+      {
+        type: "collapse",
+        name: "Consultar",
+        key: "Consultar",
+        icon: <Icon fontSize="small">search</Icon>,
+        route: "/consultar",
+        component: <Consultar />,
+      },
+    ],
   },
-  {
-    type: "collapse",
-    name: "Usuarios",
-    key: "tables",
-    icon: <Icon fontSize="small">group</Icon>,
-    route: "/tables",
-    component: <Tables />,
-  },
-  {
-    type: "collapse",
-    name: "Billing",
-    key: "billing",
-    icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/billing",
-    component: <Billing />,
-  },
-  {
-    type: "collapse",
-    name: "Notificações",
-    key: "notifications",
-    icon: <Icon fontSize="small">notifications</Icon>,
-    route: "/notifications",
-    component: <Notifications />,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Notificações",
+  //   key: "notifications",
+  //   icon: <Icon fontSize="small">notifications</Icon>,
+  //   route: "/notifications",
+  //   component: <Notifications />,
+  // },
   {
     type: "collapse",
     name: "Perfil",
@@ -99,6 +164,13 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Usuarios",
+    key: "tables",
+    icon: <Icon fontSize="small">group</Icon>,
+    route: "/tables",
+    component: <Tables />,
+  },
+  {
     name: "Sign In",
     key: "sign-in",
     icon: <Icon fontSize="small">login</Icon>,
@@ -106,7 +178,6 @@ const routes = [
     component: <SignIn />,
   },
   {
-    type: "collapse",
     name: "Sign Up",
     key: "sign-up",
     icon: <Icon fontSize="small">assignment</Icon>,

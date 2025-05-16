@@ -1,22 +1,9 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// prop-types is a library for typechecking of props.
+import { useState } from "react";
 import PropTypes from "prop-types";
 
 // @mui material components
+import Collapse from "@mui/material/Collapse";
+import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -25,7 +12,7 @@ import Icon from "@mui/material/Icon";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 
-// Custom styles for the SidenavCollapse
+// Custom styles
 import {
   collapseItem,
   collapseIconBox,
@@ -33,65 +20,95 @@ import {
   collapseText,
 } from "examples/Sidenav/styles/sidenavCollapse";
 
-// Material Dashboard 2 React context
 import { useMaterialUIController } from "context";
 
-function SidenavCollapse({ icon, name, active, ...rest }) {
+function SidenavCollapse({ icon, name, active, children, ...rest }) {
   const [controller] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
+  const [open, setOpen] = useState(false);
+
+  const hasChildren = Array.isArray(children) && children.length > 0;
+
+  const toggleOpen = () => {
+    if (hasChildren) setOpen(!open);
+  };
 
   return (
-    <ListItem component="li">
-      <MDBox
-        {...rest}
-        sx={(theme) =>
-          collapseItem(theme, {
-            active,
-            transparentSidenav,
-            whiteSidenav,
-            darkMode,
-            sidenavColor,
-          })
-        }
+    <>
+      <ListItem
+        component="li"
+        onClick={toggleOpen}
+        sx={{ cursor: hasChildren ? "pointer" : "default" }}
       >
-        <ListItemIcon
+        <MDBox
+          {...rest}
           sx={(theme) =>
-            collapseIconBox(theme, { transparentSidenav, whiteSidenav, darkMode, active })
-          }
-        >
-          {typeof icon === "string" ? (
-            <Icon sx={(theme) => collapseIcon(theme, { active })}>{icon}</Icon>
-          ) : (
-            icon
-          )}
-        </ListItemIcon>
-
-        <ListItemText
-          primary={name}
-          sx={(theme) =>
-            collapseText(theme, {
-              miniSidenav,
+            collapseItem(theme, {
+              active,
               transparentSidenav,
               whiteSidenav,
-              active,
+              darkMode,
+              sidenavColor,
             })
           }
-        />
-      </MDBox>
-    </ListItem>
+        >
+          <ListItemIcon
+            sx={(theme) =>
+              collapseIconBox(theme, {
+                transparentSidenav,
+                whiteSidenav,
+                darkMode,
+                active,
+              })
+            }
+          >
+            {typeof icon === "string" ? (
+              <Icon sx={(theme) => collapseIcon(theme, { active })}>{icon}</Icon>
+            ) : (
+              icon
+            )}
+          </ListItemIcon>
+
+          <ListItemText
+            primary={name}
+            sx={(theme) =>
+              collapseText(theme, {
+                miniSidenav,
+                transparentSidenav,
+                whiteSidenav,
+                active,
+              })
+            }
+          />
+          {hasChildren && (
+            <Icon sx={{ ml: "auto", fontSize: "1rem" }}>
+              {open ? "expand_less" : "expand_more"}
+            </Icon>
+          )}
+        </MDBox>
+      </ListItem>
+
+      {hasChildren && (
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding sx={{ pl: 4 }}>
+            {children}
+          </List>
+        </Collapse>
+      )}
+    </>
   );
 }
 
-// Setting default values for the props of SidenavCollapse
 SidenavCollapse.defaultProps = {
   active: false,
+  children: null,
 };
 
-// Typechecking props for the SidenavCollapse
 SidenavCollapse.propTypes = {
   icon: PropTypes.node.isRequired,
   name: PropTypes.string.isRequired,
   active: PropTypes.bool,
+  children: PropTypes.node,
 };
 
 export default SidenavCollapse;
