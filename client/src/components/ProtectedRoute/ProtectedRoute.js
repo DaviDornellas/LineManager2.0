@@ -1,18 +1,12 @@
-// src/components/ProtectedRoute/ProtectedRoute.js
 import React from "react";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 import PropTypes from "prop-types";
+import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user } = useAuth();
+const ProtectedRoute = ({ children, roles }) => {
+  const userRole = localStorage.getItem("role");
 
-  if (!user) {
+  if (!roles.includes(userRole)) {
     return <Navigate to="/authentication/sign-in" replace />;
-  }
-
-  if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
   }
 
   return children;
@@ -20,7 +14,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 ProtectedRoute.propTypes = {
   children: PropTypes.node.isRequired,
-  allowedRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
+  roles: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default ProtectedRoute;

@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridRowModes, GridActionsCellItem } from "@mui/x-data-grid";
 import { apiCompor90 } from "../../../../service/apiGAATI";
-import { TextField, Typography, Button } from "@mui/material";
+import { TextField, Typography, Button, Card } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import CancelIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
-import AddProduct from "../components/AddLine/index"; // Import the AddProduct form
-import Card from "@mui/material/Card";
-import MDBox from "../../../components/MDBox";
+import AddProduct from "../components/Add90Compor/index"; // Import the AddProduct form
+import MDBox from "../../../../components/MDBox";
 
 const ListProducts = () => {
   const [rows, setRows] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
   const [searchName, setSearchName] = useState("");
   const [searchBase, setSearchBase] = useState("");
   const [editingRowId, setEditingRowId] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await apiCompor90.get("/");
+        const response = await apiCompor90.get("/compor90");
         setRows(response.data);
+        setFilteredProducts(response.data);
       } catch (err) {
         setError("Erro ao buscar produtos");
       } finally {
@@ -35,23 +37,14 @@ const ListProducts = () => {
   }, []);
 
   useEffect(() => {
-    const filteredRows = rows.filter((row) => {
+    const filtered = rows.filter((row) => {
       return (
-        row.NOME.toLowerCase().includes(searchName.toLowerCase()) &&
-        row.BASE.toLowerCase().includes(searchBase.toLowerCase())
+        row.NOME?.toLowerCase().includes(searchName.toLowerCase()) &&
+        row.BASE?.toLowerCase().includes(searchBase.toLowerCase())
       );
     });
     setFilteredProducts(filtered);
-  }, [searchName, searchPhone, products]);
-
-  const handleAddClick = () => {
-    setShowAddProductForm(true); // Show the AddProduct form when "Add" is clicked
-  };
-
-  const handleProductAdd = (newProduct) => {
-    setProducts([newProduct, ...products]); // Add new product to the list
-    setShowAddProductForm(false); // Hide the form after adding
-  };
+  }, [searchName, searchBase, rows]);
 
   const handleEditClick = (id) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
@@ -59,9 +52,9 @@ const ListProducts = () => {
   };
 
   const handleSaveClick = (id) => async () => {
-    const updatedProduct = products.find((product) => product.id === id);
+    const updatedProduct = rows.find((product) => product.id === id);
     try {
-      await api.put(`/produtos/${id}`, updatedProduct);
+      await apiCompor90.put(`/${id}`, updatedProduct);
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
       setEditingRowId(null);
     } catch (error) {
@@ -79,8 +72,8 @@ const ListProducts = () => {
 
   const handleDeleteClick = (id) => async () => {
     try {
-      await api.delete(`/produtos/${id}`);
-      setProducts(products.filter((product) => product.id !== id));
+      await apiCompor90.delete(`/${id}`);
+      setRows(rows.filter((product) => product.id !== id));
     } catch (error) {
       console.error("Erro ao excluir produto", error);
     }
@@ -88,7 +81,7 @@ const ListProducts = () => {
 
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
-    setProducts(products.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
     return updatedRow;
   };
 
@@ -104,16 +97,14 @@ const ListProducts = () => {
         if (isInEditMode) {
           return [
             <GridActionsCellItem
-              key={`save-${id}`} // Adiciona a key aqui
+              key={`save-${id}`}
               icon={<SaveIcon />}
               label="Save"
-              sx={{
-                color: "#009B77",
-              }}
+              sx={{ color: "#009B77" }}
               onClick={handleSaveClick(id)}
             />,
             <GridActionsCellItem
-              key={`cancel-${id}`} // Adiciona a key aqui
+              key={`cancel-${id}`}
               icon={<CancelIcon />}
               label="Cancel"
               onClick={handleCancelClick(id)}
@@ -123,11 +114,18 @@ const ListProducts = () => {
         }
         return [
           <GridActionsCellItem
-            key={`edit-${id}`} // Adiciona a key aqui
+            key={`edit-${id}`}
             icon={<EditIcon />}
             label="Edit"
             onClick={handleEditClick(id)}
             disabled={editingRowId !== null}
+          />,
+          <GridActionsCellItem
+            key={`delete-${id}`}
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteClick(id)}
+            color="inherit"
           />,
         ];
       },
@@ -147,7 +145,7 @@ const ListProducts = () => {
 
   return (
     <Card>
-      <MDBox p={4}>
+      <MDBox p={4} display="flex" gap={2}>
         <TextField
           label="Filtrar por Responsável"
           variant="outlined"
@@ -156,11 +154,11 @@ const ListProducts = () => {
           onChange={(e) => setSearchName(e.target.value)}
         />
         <TextField
-          label="Filtrar por Telefone"
+          label="Filtrar por Base"
           variant="outlined"
           size="small"
-          value={searchPhone}
-          onChange={(e) => setSearchPhone(e.target.value)}
+          value={searchBase}
+          onChange={(e) => setSearchBase(e.target.value)}
         />
       </MDBox>
 
@@ -173,29 +171,26 @@ const ListProducts = () => {
           processRowUpdate={processRowUpdate}
           editMode="row"
           disableSelectionOnClick
-          isCellEditable={(params) => {
-            return editingRowId === null || editingRowId === params.id;
-          }}
+          isCellEditable={(params) => editingRowId === null || editingRowId === params.id}
           sx={{
             backgroundColor: "#fff",
             border: "1px solid #ccc",
             borderRadius: "8px",
-            height: "400px", // Ajuste a altura do grid
-            width: "94%", // Ajuste a largura do grid (reduzido para 90% da tela)
-            margin: "0 auto", // Centraliza o grid
+            height: "400px",
+            width: "94%",
+            margin: "0 auto",
             "& .MuiDataGrid-cell": {
               borderBottom: "1px solid #e0e0e0",
-              fontSize: "14px", // Altera o tamanho da fonte das células
+              fontSize: "14px",
             },
             "& .MuiDataGrid-columnHeaders": {
               backgroundColor: "#f5f5f5",
               borderBottom: "1px solid #ccc",
-              fontSize: "14px", // Altera o tamanho da fonte das células
+              fontSize: "14px",
             },
           }}
         />
       </MDBox>
-      <MDBox>.</MDBox>
     </Card>
   );
 };

@@ -1,51 +1,45 @@
+// produto.js
 const express = require("express");
-const Produto = require("../model/produtos");
+const db = require("../database/db");
 const router = express.Router();
 
-router.get("/produtos", async (req, res) => {
-  const produtos = await Produto.findAll();
-  res.json(produtos);
-});
+// Get all divisions
+router.get("/produtos", (req, res) => {
+  const query = "SELECT * FROM Products";
 
-router.post("/produtos", async (req, res) => {
-  const { responsible, artwork, destiwork, operator, phoneNumber, date, category } = req.body;
-
-  // Pega a data atual
-  const currentDate = new Date();
-
-  // Cria o novo produto com a data e o ID sendo gerado automaticamente
-  const newProduct = await Produto.create({
-    responsible,
-    artwork,
-    destiwork,
-    operator,
-    phoneNumber,
-    date,
-    category,
-    createdAt: currentDate,  // Armazena a data de criação
-  });
-
-  res.json({ 
-    id: newProduct.id,   // Retorna o id do produto
-    createdAt: newProduct.createdAt,  // Retorna a data de criação
-    message: "Produto adicionado com sucesso!"
+  db.all(query, [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: "Erro ao obter Products" });
+    }
+    res.json(rows);
   });
 });
 
-router.put("/produtos/:id", async (req, res) => {
-  const { id } = req.params;
+// Criar produto
+router.post("/produtos", (req, res) => {
   const { responsible, artwork, destiwork, operator, phoneNumber, date, category } = req.body;
-  await Produto.update(
-    {responsible, artwork, destiwork, operator, phoneNumber, date, category },
-    { where: { id } }
-  );
-  res.json({ message: "Produto atualizado com sucesso" });
+  const query = `INSERT INTO Products (responsible, artwork, destiwork, operator, phoneNumber, date, category) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+  db.run(query, [responsible, artwork, destiwork, operator, phoneNumber, date, category], function (err) {
+    if (err) {
+      return res.status(500).json({ error: "Erro ao adicionar produto" });
+    }
+    res.json({ id: this.lastID, message: "Produto adicionado com sucesso!" });
+  });
 });
 
-router.delete("/produtos/:id", async (req, res) => {
+// Excluir produto
+router.delete("/produtos/:id", (req, res) => {
   const { id } = req.params;
-  await Produto.destroy({ where: { id } });
-  res.json({ message: "Produto deletado com sucesso" });
+  const query = `DELETE FROM Products WHERE id = ?`;
+
+  db.run(query, [id], function (err) {
+    if (err) {
+      return res.status(500).json({ error: "Erro ao excluir produto" });
+    }
+    res.json({ message: "Produto excluído com sucesso!" });
+  });
 });
 
 module.exports = router;

@@ -5,10 +5,10 @@ import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import CancelIcon from "@mui/icons-material/Close";
-import { apiCompor90 } from "../../../../service/apiGAATI";
+import { apiCredencial } from "../../../../service/apiGAATI";
 import MDBox from "../../../../components/MDBox";
 
-const TableCompor90 = () => {
+const Tablecredencial = () => {
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
   const [searchName, setSearchName] = useState("");
@@ -19,10 +19,10 @@ const TableCompor90 = () => {
   useEffect(() => {
     const fetchRows = async () => {
       try {
-        const response = await apiCompor90.get("/compor90");
+        const response = await apiCredencial.get("/credencial");
         setRows(response.data);
       } catch (err) {
-        setError("Erro ao buscar dados do Compor90");
+        setError("Erro ao buscar dados do credencial");
       }
     };
 
@@ -31,8 +31,8 @@ const TableCompor90 = () => {
 
   const filteredRows = rows.filter(
     (row) =>
-      row.NOME.toLowerCase().includes(searchName.toLowerCase()) &&
-      row.BASE.toLowerCase().includes(searchBase.toLowerCase())
+      (row.Nome?.toLowerCase() || "").includes(searchName.toLowerCase()) &&
+      (row.Office?.toLowerCase() || "").includes(searchBase.toLowerCase()) // use Office no lugar de "Base"
   );
 
   const handleEditClick = (id) => () => {
@@ -41,9 +41,9 @@ const TableCompor90 = () => {
   };
 
   const handleSaveClick = (id) => async () => {
-    const updatedRow = rows.find((row) => row.CODE === id);
+    const updatedRow = rows.find((row) => row.Code === id);
     try {
-      await apiCompor90.put(`/${id}`, updatedRow);
+      await apiCredencial.put(`/${id}`, updatedRow);
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
       setEditingRowId(null);
     } catch (error) {
@@ -61,8 +61,8 @@ const TableCompor90 = () => {
 
   const handleDeleteClick = (id) => async () => {
     try {
-      await apiCompor90.delete(`/${id}`);
-      setRows(rows.filter((row) => row.CODE !== id));
+      await apiCredencial.delete(`/${id}`);
+      setRows(rows.filter((row) => row.Code !== id));
     } catch (error) {
       console.error("Erro ao deletar registro:", error);
     }
@@ -70,7 +70,7 @@ const TableCompor90 = () => {
 
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.CODE === newRow.CODE ? updatedRow : row)));
+    setRows(rows.map((row) => (row.Code === newRow.Code ? updatedRow : row)));
     return updatedRow;
   };
 
@@ -109,16 +109,18 @@ const TableCompor90 = () => {
         ];
       },
     },
-    { field: "CODE", headerName: "Código", width: 100, editable: false },
-    { field: "NOME", headerName: "Nome", flex: 1, editable: true },
-    { field: "SENHA", headerName: "Senha", flex: 1, editable: true },
-    { field: "BASE", headerName: "Base", flex: 1, editable: true },
+    { field: "Code", headerName: "Código", width: 100, editable: false },
+    { field: "Nome", headerName: "Nome", flex: 1, editable: true },
+    { field: "Usu_Rede", headerName: "Usuário", flex: 1, editable: true },
+    { field: "Office", headerName: "Office", flex: 0.5, editable: true },
+    { field: "Chamado", headerName: "Chamado", flex: 1, editable: true },
+    { field: "VPN", headerName: "VPN", flex: 0.5, editable: true },
   ];
 
   return (
     <Card>
       <MDBox p={2}>
-        <Typography variant="h6">Lista de Compor90</Typography>
+        <Typography variant="h6">Lista de credencial</Typography>
         <MDBox display="flex" gap={2} my={2}>
           <TextField
             label="Filtrar por Nome"
@@ -126,18 +128,12 @@ const TableCompor90 = () => {
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
           />
-          <TextField
-            label="Filtrar por Base"
-            size="small"
-            value={searchBase}
-            onChange={(e) => setSearchBase(e.target.value)}
-          />
         </MDBox>
 
         <DataGrid
           rows={filteredRows}
           columns={columns}
-          getRowId={(row) => row.CODE}
+          getRowId={(row) => row.Code}
           editMode="row"
           rowModesModel={rowModesModel}
           onRowModesModelChange={setRowModesModel}
@@ -156,4 +152,4 @@ const TableCompor90 = () => {
   );
 };
 
-export default TableCompor90;
+export default Tablecredencial;

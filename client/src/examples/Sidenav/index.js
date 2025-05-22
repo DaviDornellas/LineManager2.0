@@ -67,12 +67,16 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     // Remove event listener on cleanup
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
+  const userRole = localStorage.getItem("role") || "user";
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
   const renderRoutes = routes.map((route) => {
-    const { type, name, icon, title, noCollapse, key, href, route: path, collapse } = route;
+    const { type, name, icon, title, noCollapse, key, href, route: path, collapse, roles } = route;
 
     if (type === "collapse") {
+      if (roles && !roles.includes(userRole)) {
+        return null;
+      }
       return href ? (
         <Link
           href={href}
@@ -96,9 +100,15 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     }
 
     if (type === "group") {
+      const visibleChildren = collapse?.filter(
+        (child) => !child.roles || child.roles.includes(userRole)
+      );
+
+      if (!visibleChildren.length) return null;
+
       return (
         <SidenavCollapse key={key} name={name} icon={icon} active={false}>
-          {collapse?.map((child) =>
+          {visibleChildren.map((child) =>
             child.href ? (
               <Link
                 href={child.href}

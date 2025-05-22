@@ -1,0 +1,22 @@
+COMANDOS CLIENT
+1.npm create vite@latest client(criar projeto)
+2.cd client(entrar na pasta client)
+3.npm i axios react-router-dom(baixar dependencias)
+4.npm run dev(rodar projeto)
+
+COMANDOS SERVER
+1.mkdir server (criar pasta server na raiz)
+2.cd server(entrar na pasta server) 
+3.npm init -y(gerar projeto node express)
+4.npm i cors bcryptjs dotenv express sequelize jsonwebtoken @sequelize/sqlite3(baixar dependencias)
+5.node <nome do arquivo de sincronizacao> (ex: node sync.js)
+6.node index.js(subir servidor na porta direcionada)
+
+COMANDOS INICIAR
+SERVER
+cd server
+node index.js
+
+CLIENT
+cd client
+npm start

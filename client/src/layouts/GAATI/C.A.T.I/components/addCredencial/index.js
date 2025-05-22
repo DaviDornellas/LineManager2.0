@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { apiPrimavera } from "../../../../../service/apiGAATI"; // API correta para compor90
+import { apiCredencial } from "../../../../../service/apiGAATI"; // API correta para compor90
+
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import Icon from "@mui/material/Icon";
+
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import PropTypes from "prop-types";
-import Icon from "@mui/material/Icon";
 
-const AddPrimavera = ({ onPrimaveraAdd }) => {
+const AddCredencial = ({ onCredencialAdd }) => {
   const [bases, setBases] = useState([]);
   const [nome, setNome] = useState("");
-  const [base, setBase] = useState("");
+  const [centrocusto, setCentroCusto] = useState("");
+  const [obra, setObra] = useState("");
+  const [chamado, setChamado] = useState("");
+  const [ativo, setAtivo] = useState(false); // false = 0, true = 1
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
@@ -22,7 +29,7 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
   useEffect(() => {
     const fetchBases = async () => {
       try {
-        const response = await apiPrimavera.get("/primavera");
+        const response = await apiCredencial.get("/credencial");
         const uniqueBases = [...new Set(response.data.map((item) => item.BASE))];
         setBases(uniqueBases);
       } catch (error) {
@@ -33,10 +40,10 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
     fetchBases();
   }, []);
 
-  const handleAddPrimavera = async (e) => {
+  const handleAddCredencial = async (e) => {
     e.preventDefault();
 
-    if (!nome || !base) {
+    if (!nome || !centrocusto || !obra || !chamado) {
       setSnackbarMessage("Preencha todos os campos obrigatórios.");
       setSnackbarSeverity("error");
       setOpenSnackbar(true);
@@ -44,14 +51,18 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
     }
 
     try {
-      const response = await apiPrimavera.post("/primavera", {
-        NOME: nome.toUpperCase(),
-        BASE: base.toUpperCase(),
+      const response = await apiCredencial.post("/credencial", {
+        Nome: nome.toUpperCase(),
+        Office: `${obra.toUpperCase()}${centrocusto.toUpperCase()}`,
+        Chamado: chamado.toUpperCase(),
+        VPN: ativo ? 1 : 0, // checkbox controlado
       });
 
-      onPrimaveraAdd(response.data);
+      onCredencialAdd(response.data);
       setNome("");
-      setBase("");
+      setCentroCusto("");
+      setObra("");
+      setChamado("");
       setSnackbarMessage("Usuário adicionado com sucesso!");
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
@@ -62,44 +73,70 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
       setOpenSnackbar(true);
     }
   };
-
   return (
     <Card>
       <MDBox p={3}>
         <MDTypography variant="h6" gutterBottom>
-          Adicionar Usuário ao Primavera
+          Cadastrar Credencial
         </MDTypography>
-        <form onSubmit={handleAddPrimavera}>
+        <form onSubmit={handleAddCredencial}>
           <Grid container spacing={2} direction="column">
             <Grid item>
               <MDInput
-                label="Nome do Usuário"
+                label="Nome"
                 fullWidth
                 value={nome}
-                onChange={(e) => setNome(e.target.value)}
+                onChange={(e) => setNome(e.target.value.toUpperCase())}
                 required
               />
             </Grid>
             <Grid item>
               <MDInput
-                label="Base"
+                label="Obra"
                 fullWidth
-                value={base}
-                onChange={(e) => setBase(e.target.value)}
+                value={obra}
+                onChange={(e) => setObra(e.target.value.toUpperCase())}
                 required
-                list="base-options"
               />
-              <datalist id="base-options">
-                {bases.map((b, idx) => (
-                  <option key={idx} value={b} />
-                ))}
-              </datalist>
+            </Grid>
+            <Grid item>
+              <MDInput
+                label="Central de custo"
+                fullWidth
+                value={centrocusto}
+                onChange={(e) => setCentroCusto(e.target.value.toUpperCase())}
+                required
+              />
+            </Grid>
+            <Grid item>
+              <MDInput
+                label="Chamado"
+                fullWidth
+                value={chamado}
+                onChange={(e) => setChamado(e.target.value.toUpperCase())}
+                required
+              />
+            </Grid>
+            <Grid item>
+              <MDTypography variant="h6" gutterBottom>
+                VPN
+              </MDTypography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={ativo}
+                    onChange={(e) => setAtivo(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label="Ativo"
+              />
             </Grid>
           </Grid>
           <MDBox mt={2} display="flex" justifyContent="center">
-            <MDButton variant="gradient" color="info" type="submit">
+            <MDButton variant="gradient" color="infog" type="submit">
               <Icon sx={{ fontWeight: "bold" }}>add</Icon>
-              &nbsp;Adicionar Usuário
+              &nbsp;Cadastrar
             </MDButton>
           </MDBox>
         </form>
@@ -117,8 +154,8 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
   );
 };
 
-AddPrimavera.propTypes = {
-  onPrimaveraAdd: PropTypes.func.isRequired,
+AddCredencial.propTypes = {
+  onCredencialAdd: PropTypes.func.isRequired,
 };
 
-export default AddPrimavera;
+export default AddCredencial;

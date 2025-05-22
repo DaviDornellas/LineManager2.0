@@ -4,6 +4,8 @@ import Grid from "@mui/material/Grid";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
+import Card from "@mui/material/Card";
+import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -55,16 +57,25 @@ function Dashboard() {
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        <MDBox>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={8}>
-              <Addsenhavpn onProductAdd={handleProductAdd} />
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview />
-            </Grid>
+        <Card>
+          <MDBox
+            mx={2}
+            mt={-3}
+            py={3}
+            px={2}
+            variant="gradient"
+            bgColor="infog"
+            borderRadius="lg"
+            coloredShadow="infog"
+          >
+            <MDTypography variant="h6" color="white">
+              Senha VPN
+            </MDTypography>
+          </MDBox>
+          <Grid item xs={12} md={6} lg={8}>
+            <Addsenhavpn onProductAdd={handleProductAdd} />
           </Grid>
-        </MDBox>
+        </Card>
       </MDBox>
     </DashboardLayout>
   );

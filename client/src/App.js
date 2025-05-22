@@ -23,6 +23,7 @@ import themeDark from "assets/theme-dark";
 
 // Material Dashboard 2 React routes
 import routes from "routes";
+import ProtectedRoute from "components/ProtectedRoute/ProtectedRoute"; // importe no topo
 
 // Material Dashboard 2 React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
@@ -99,16 +100,22 @@ export default function App() {
   }, [pathname]);
 
   const getRoutes = (allRoutes) =>
-    allRoutes.map((route) => {
+    allRoutes.flatMap((route) => {
       if (route.collapse) {
         return getRoutes(route.collapse);
       }
 
       if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+        const element = route.roles ? (
+          <ProtectedRoute roles={route.roles}> {route.component} </ProtectedRoute>
+        ) : (
+          route.component
+        );
+
+        return <Route exact path={route.route} element={element} key={route.key} />;
       }
 
-      return null;
+      return [];
     });
 
   const configsButton = (

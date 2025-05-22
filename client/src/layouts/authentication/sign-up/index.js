@@ -153,10 +153,10 @@ function Cover() {
                   label="Tipo"
                   onChange={(e) => setRole(e.target.value)}
                 >
-                  <MenuItem value="user">User</MenuItem>
                   <MenuItem value="admin">Admin</MenuItem>
                   <MenuItem value="reader">Leitor</MenuItem>
                   <MenuItem value="editor">Editor</MenuItem>
+                  <MenuItem value="admingati">Admin G.A.T.I</MenuItem>
                 </Select>
               </FormControl>
             </MDBox>

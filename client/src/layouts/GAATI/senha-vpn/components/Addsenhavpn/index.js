@@ -69,7 +69,6 @@ const AddProduct = ({ onProductAdd }) => {
                 fullWidth
                 value={responsible}
                 onChange={(e) => setResponsible(e.target.value.toUpperCase())}
-                required
               />
             </Grid>
           </Grid>

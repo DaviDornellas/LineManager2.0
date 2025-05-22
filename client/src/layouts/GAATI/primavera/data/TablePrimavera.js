@@ -5,7 +5,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import CancelIcon from "@mui/icons-material/Close";
-import { apiCompor90 } from "../../../../service/apiGAATI";
+import { apiPrimavera } from "../../../../service/apiGAATI";
 import MDBox from "../../../../components/MDBox";
 
 const TableCompor90 = () => {
@@ -19,7 +19,7 @@ const TableCompor90 = () => {
   useEffect(() => {
     const fetchRows = async () => {
       try {
-        const response = await apiCompor90.get("/compor90");
+        const response = await apiPrimavera.get("/primavera");
         setRows(response.data);
       } catch (err) {
         setError("Erro ao buscar dados do Compor90");
@@ -111,6 +111,7 @@ const TableCompor90 = () => {
     },
     { field: "CODE", headerName: "Código", width: 100, editable: false },
     { field: "NOME", headerName: "Nome", flex: 1, editable: true },
+    { field: "USUARIO", headerName: "Usuario", flex: 1, editable: true },
     { field: "SENHA", headerName: "Senha", flex: 1, editable: true },
     { field: "BASE", headerName: "Base", flex: 1, editable: true },
   ];
