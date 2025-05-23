@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import axios from "axios";
 // react-router components
 import { useLocation, Link, useNavigate } from "react-router-dom";
 
@@ -97,9 +97,31 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // ou sessionStorage.removeItem se você usa session
-    navigate("/login");
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    try {
+      await axios.post(
+        "http://localhost:5000/api/auth/logout", // ajuste a URL se necessário
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      localStorage.removeItem("token");
+      navigate("/login");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      // Mesmo que o logout falhe, remover o token e redirecionar é mais seguro
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
   };
 
   // Styles for the navbar icons
