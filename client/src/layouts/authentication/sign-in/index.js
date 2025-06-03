@@ -40,15 +40,16 @@ function Login() {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post("http://192.168.7.65:5000/api/auth/login", {
         email,
         password,
       });
+      console.log("Token recebido:", response.data.token); // <-- ADICIONE ISSO
       // Armazena o token no localStorage ou sessionStorage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.role);
       // Redireciona para o dashboard
-      navigate("/dashboard");
+      navigate("/HomePage");
     } catch (error) {
       setErrorMessage("Email ou Senha incorretos.");
     }

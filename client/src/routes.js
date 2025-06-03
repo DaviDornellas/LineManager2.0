@@ -37,6 +37,7 @@ import Compor from "layouts/GAATI/90compor";
 import Consultar from "layouts/GAATI/consultar";
 import Senhavpn from "layouts/GAATI/senha-vpn";
 import Primavera from "layouts/GAATI/primavera";
+import HomePage from "layouts/HomePage";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -51,9 +52,9 @@ const routes = [
     collapse: [
       {
         type: "collapse",
-        name: "Painel",
+        name: "Linha",
         key: "dashboard",
-        icon: <Icon fontSize="small">dashboard</Icon>,
+        icon: <Icon fontSize="small">add</Icon>,
         route: "/dashboard",
         roles: ["admin", "editor", "reader"],
         component: <Dashboard />,
@@ -78,7 +79,7 @@ const routes = [
       },
       {
         type: "collapse",
-        name: "Finanças",
+        name: "Rateio",
         key: "billing",
         icon: <Icon fontSize="small">receipt_long</Icon>,
         route: "/billing",
@@ -159,13 +160,31 @@ const routes = [
   //   component: <Notifications />,
   // },
   {
-    type: "collapse",
-    name: "Obras",
-    key: "division",
-    icon: <Icon fontSize="small">add_home_work</Icon>,
-    route: "/division",
-    roles: ["admin"],
-    component: <Division />,
+    type: "group",
+    name: "Administração",
+    key: "AdministraçãoSGL",
+    icon: <Icon fontSize="small">lock</Icon>,
+    roles: ["admin", "editor"],
+    collapse: [
+      {
+        type: "collapse",
+        name: "Obras",
+        key: "division",
+        icon: <Icon fontSize="small">add_home_work</Icon>,
+        route: "/division",
+        roles: ["admin"],
+        component: <Division />,
+      },
+      {
+        type: "collapse",
+        name: "Usuarios",
+        key: "tables",
+        icon: <Icon fontSize="small">group</Icon>,
+        route: "/tables",
+        roles: ["admin"],
+        component: <Tables />,
+      },
+    ],
   },
   {
     type: "collapse",
@@ -176,13 +195,11 @@ const routes = [
     component: <Profile />,
   },
   {
-    type: "collapse",
-    name: "Usuarios",
-    key: "tables",
-    icon: <Icon fontSize="small">group</Icon>,
-    route: "/tables",
-    roles: ["admin"],
-    component: <Tables />,
+    name: "HomePage",
+    key: "HomePage",
+    icon: <Icon fontSize="small">person</Icon>,
+    route: "/HomePage",
+    component: <HomePage />,
   },
   {
     name: "Sign In",

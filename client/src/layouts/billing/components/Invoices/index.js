@@ -18,7 +18,7 @@ function Invoices() {
   const [invoices, setInvoices] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/invoices")
+    fetch("http://192.168.7.65:5000/api/invoices")
       .then((response) => response.json())
       .then((data) => setInvoices(data))
       .catch((error) => console.error("Erro ao buscar faturas:", error));
@@ -55,7 +55,7 @@ function Invoices() {
     formData.append("file", invoiceData.file);
 
     try {
-      const response = await fetch("http://localhost:5000/api/invoices", {
+      const response = await fetch("http://192.168.7.65:5000/api/invoices", {
         method: "POST",
         body: formData,
       });
@@ -93,7 +93,7 @@ function Invoices() {
                 price={invoice.price}
               >
                 {invoice.filePath && (
-                  <a href={`http://localhost:5000/${invoice.filePath}`} download>
+                  <a href={`http://192.168.7.65:5000/${invoice.filePath}`} download>
                     <PictureAsPdfIcon
                       color="error"
                       style={{ marginLeft: "10px", cursor: "pointer" }}

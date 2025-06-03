@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../database/db");
 const router = express.Router();
+const checkAuth = require("../middlewares/checkAuth");
 const secretKey = process.env.JWT_SECRET || "secreta";
 
 // Registrar um novo usuário
@@ -72,7 +73,7 @@ router.post("/logout", (req, res) => {
 });
 
 // Dados do usuário logado
-router.get("/me", (req, res) => {
+router.get("/me", checkAuth, (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Token não fornecido ou inválido" });
@@ -81,14 +82,31 @@ router.get("/me", (req, res) => {
   const token = authHeader.split(" ")[1];
   try {
     const decoded = jwt.verify(token, secretKey);
-    db.get("SELECT username, position, location, email FROM Users WHERE id = ?", [decoded.id], (err, user) => {
-      if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
-      res.json(user);
-    });
+
+    db.get(
+      "SELECT id, username, position, location, email, role, forcar_logout FROM Users WHERE id = ?",
+      [decoded.id],
+      (err, user) => {
+        if (err) return res.status(500).json({ error: "Erro ao buscar usuário" });
+        if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
+
+        if (user.forcar_logout === 1) {
+          // Marca o usuário como desconectado no banco
+          db.run("UPDATE Users SET isLoggedIn = 0 WHERE id = ?", [user.id]);
+
+          return res.status(403).json({ error: "Sessão encerrada por um administrador." });
+        }
+
+        // Opcional: remover campo `forcar_logout` da resposta
+        const { id, username, position, location, email, role } = user;
+        res.json({ id, username, position, location, email, role });
+      }
+    );
   } catch (err) {
     return res.status(401).json({ error: "Token inválido ou expirado" });
   }
 });
+
 
 // Verifica se o usuário está logado
 router.get("/isLoggedIn", (req, res) => {
@@ -143,44 +161,23 @@ router.delete("/users/:id", (req, res) => {
   });
 });
 
-// Criar admin padrão
-const createDefaultUser = () => {
-  const username = "Admin";
-  const position = "Administrador";
-  const location = "Matriz";
-  const email = "admin@exemplo.com";
-  const password = "admin123";
-  const role = "admin";
+// Logout forçado por um admin
+router.post("/logout/:id", checkAuth, (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ error: "Apenas administradores podem deslogar outros usuários" });
+  }
 
-  db.get("SELECT * FROM Users WHERE email = ?", [email], (err, row) => {
-    if (err) {
-      console.error("Erro ao verificar usuário padrão:", err);
-      return;
+  const userId = req.params.id;
+
+  db.run("UPDATE Users SET isLoggedIn = 0 WHERE id = ?", [userId], function (err) {
+    if (err) return res.status(500).json({ error: "Erro ao deslogar usuário" });
+
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
-    if (row) {
-      console.log("Usuário admin já existe.");
-    } else {
-      bcrypt.hash(password, 10, (err, hashedPassword) => {
-        if (err) {
-          console.error("Erro ao criptografar a senha:", err);
-          return;
-        }
-
-        const query = `INSERT INTO Users (username, position, location, email, password, role, isLoggedIn)
-                       VALUES (?, ?, ?, ?, ?, ?, 0)`;
-        db.run(query, [username, position, location, email, hashedPassword, role], (err) => {
-          if (err) {
-            console.error("Erro ao criar o usuário admin:", err);
-          } else {
-            console.log("Usuário admin criado com sucesso.");
-          }
-        });
-      });
-    }
+    res.json({ message: `Usuário ${userId} foi deslogado com sucesso` });
   });
-};
-
-createDefaultUser();
+});
 
 module.exports = router;

@@ -32,6 +32,9 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
 
     fetchBases();
   }, []);
+  const capitalizeWords = (str) => {
+    return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   const handleAddPrimavera = async (e) => {
     e.preventDefault();
@@ -45,7 +48,7 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
 
     try {
       const response = await apiPrimavera.post("/primavera", {
-        NOME: nome.toUpperCase(),
+        NOME: capitalizeWords(nome),
         BASE: base.toUpperCase(),
       });
 
@@ -97,7 +100,7 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
             </Grid>
           </Grid>
           <MDBox mt={2} display="flex" justifyContent="center">
-            <MDButton variant="gradient" color="info" type="submit">
+            <MDButton variant="gradient" color="infog" type="submit">
               <Icon sx={{ fontWeight: "bold" }}>add</Icon>
               &nbsp;Adicionar Usuário
             </MDButton>

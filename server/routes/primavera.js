@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../database/db");
 const router = express.Router();
+const checkAuth = require("../middlewares/checkAuth");
 
 // Função para gerar a senha no formato P12345@TR
 function gerarSenha() {

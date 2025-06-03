@@ -52,7 +52,7 @@ export default function App() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        await axios.get("http://localhost:5000/api/auth/me", {
+        await axios.get("http://192.168.7.65:5000/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
       } catch (err) {

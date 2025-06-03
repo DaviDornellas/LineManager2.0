@@ -74,42 +74,10 @@ const AddProduct = ({ onProductAdd }) => {
             </Grid>
             <Grid item>
               <MDInput
-                label="Centro de custo"
-                fullWidth
-                value={costCenter}
-                onChange={(e) => setCostCenter(e.target.value.toUpperCase())}
-                required
-              />
-            </Grid>
-            <Grid item>
-              <MDInput
                 label="Número da divisão"
                 fullWidth
                 value={divisionNumber}
                 onChange={(e) => setDivisionNumber(e.target.value.toUpperCase())}
-                required
-              />
-            </Grid>
-            <Grid item>
-              <MDInput
-                select
-                label="Empresa responsável"
-                fullWidth
-                value={responsibleCompany}
-                onChange={(e) => setResponsibleCompany(e.target.value)}
-                required
-                SelectProps={{ sx: { height: "44px" } }}
-              >
-                <MenuItem value="Aterpa">Aterpa</MenuItem>
-                <MenuItem value="JDantas">JDantas</MenuItem>
-              </MDInput>
-            </Grid>
-            <Grid item>
-              <MDInput
-                type="date"
-                fullWidth
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
                 required
               />
             </Grid>
@@ -129,7 +97,7 @@ const AddProduct = ({ onProductAdd }) => {
             </Grid>
           </Grid>
           <MDBox mt={2} display="flex" justifyContent="center">
-            <MDButton variant="gradient" color="info" type="submit">
+            <MDButton variant="gradient" color="infog" type="submit">
               <Icon sx={{ fontWeight: "bold" }}>add</Icon>
               &nbsp;Adicionar Divisão
             </MDButton>

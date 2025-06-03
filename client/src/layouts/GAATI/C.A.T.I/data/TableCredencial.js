@@ -7,12 +7,15 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import CancelIcon from "@mui/icons-material/Close";
 import { apiCredencial } from "../../../../service/apiGAATI";
 import MDBox from "../../../../components/MDBox";
+import { Button } from "@mui/material";
+import MDButton from "components/MDButton";
 
 const Tablecredencial = () => {
   const [rows, setRows] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
   const [searchName, setSearchName] = useState("");
-  const [searchBase, setSearchBase] = useState("");
+  const [searchOffice, setSearchOffice] = useState("");
+  const [searchChamado, setSearchChamado] = useState("");
   const [editingRowId, setEditingRowId] = useState(null);
   const [error, setError] = useState(null);
 
@@ -32,7 +35,8 @@ const Tablecredencial = () => {
   const filteredRows = rows.filter(
     (row) =>
       (row.Nome?.toLowerCase() || "").includes(searchName.toLowerCase()) &&
-      (row.Office?.toLowerCase() || "").includes(searchBase.toLowerCase()) // use Office no lugar de "Base"
+      (row.Office?.toLowerCase() || "").includes(searchOffice.toLowerCase()) && // use Office no lugar de "Base"
+      (row.Chamado?.toLowerCase() || "").includes(searchChamado.toLowerCase())
   );
 
   const handleEditClick = (id) => () => {
@@ -114,7 +118,31 @@ const Tablecredencial = () => {
     { field: "Usu_Rede", headerName: "Usuário", flex: 1, editable: true },
     { field: "Office", headerName: "Office", flex: 0.5, editable: true },
     { field: "Chamado", headerName: "Chamado", flex: 1, editable: true },
-    { field: "VPN", headerName: "VPN", flex: 0.5, editable: true },
+    {
+      field: "link_glpi",
+      headerName: "GLPI",
+      flex: 0.5,
+      editable: false,
+      renderCell: (params) => {
+        const chamado = params.row.Chamado;
+        if (!chamado) return null;
+
+        const url = `http://sgc.aterpa.com.br/glpi/front/ticket.form.php?id=${chamado}`;
+
+        return (
+          <MDButton
+            variant="contained"
+            color="infog"
+            size="small"
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Acessar
+          </MDButton>
+        );
+      },
+    },
   ];
 
   return (
@@ -124,12 +152,23 @@ const Tablecredencial = () => {
         <MDBox display="flex" gap={2} my={2}>
           <TextField
             label="Filtrar por Nome"
-            size="small"
+            size="large"
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
           />
+          <TextField
+            label="Filtrar por Obra"
+            size="large"
+            value={searchOffice}
+            onChange={(e) => setSearchOffice(e.target.value.toUpperCase())}
+          />
+          <TextField
+            label="Filtrar por Chamado"
+            size="large"
+            value={searchChamado}
+            onChange={(e) => setSearchChamado(e.target.value)}
+          />
         </MDBox>
-
         <DataGrid
           rows={filteredRows}
           columns={columns}

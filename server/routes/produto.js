@@ -2,6 +2,7 @@
 const express = require("express");
 const db = require("../database/db");
 const router = express.Router();
+const checkAuth = require("../middlewares/checkAuth");
 
 // Get all divisions
 router.get("/produtos", (req, res) => {

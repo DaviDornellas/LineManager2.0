@@ -90,9 +90,8 @@ const ListDivision = () => {
       },
     },
     { field: "id", headerName: "ID", flex: 0.2, editable: false },
+    { field: "divisionNumber", headerName: "Numero da Obra ", flex: 0.8, editable: true },
     { field: "divisionName", headerName: "Nome da Divisão", flex: 1.9, editable: true },
-    { field: "costCenter", headerName: "Centro de Custo", flex: 0.8, editable: true },
-    { field: "responsibleCompany", headerName: "Empresa", flex: 0.5, editable: true },
     { field: "status", headerName: "Status", flex: 0.7, editable: true },
   ];
 

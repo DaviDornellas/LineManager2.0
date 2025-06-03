@@ -47,7 +47,7 @@ function Header({ children }) {
       const token = localStorage.getItem("token");
       if (!token) return;
       try {
-        const response = await axios.get("http://localhost:5000/api/auth/me", {
+        const response = await axios.get("http://192.168.7.65:5000/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser({

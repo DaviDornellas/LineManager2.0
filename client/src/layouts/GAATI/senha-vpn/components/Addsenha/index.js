@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../../../../service/index";
+import { apiCredencial } from "../../../../../service/apiGAATI"; // API correta para compor90
 import api2 from "../../../../../service/indexdivision";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -20,6 +20,29 @@ const AddProduct = ({ onProductAdd }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [divisions, setDivisions] = useState([]);
+  const [product, setProduct] = useState({
+    // outros campos...
+    userCredencial: "",
+  });
+
+  useEffect(() => {
+    const fetchDivisions = async () => {
+      try {
+        const response = await apiCredencial.get("/credencial");
+        setDivisions(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar divisões:", error);
+      }
+    };
+
+    fetchDivisions();
+  }, []);
+
+  const divisionOptions = divisions.map((div) => ({
+    label: `${div.Code} - ${div.Usu_Rede} - VPN: ${div.VPN}`,
+    value: div.Code,
+  }));
 
   const generatePassword = () => {
     const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -44,6 +67,7 @@ const AddProduct = ({ onProductAdd }) => {
 
     try {
       await navigator.clipboard.writeText(password);
+
       setSnackbarMessage("Senha gerada e copiada para a área de transferência!");
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
@@ -59,26 +83,9 @@ const AddProduct = ({ onProductAdd }) => {
     <Card>
       <MDBox p={3}>
         <MDTypography variant="h6" gutterBottom>
-          Gerar Senha VPN
+          Gerador de Senha
         </MDTypography>
         <form onSubmit={handleAddProduct}>
-          <Grid container spacing={2} direction="column">
-            <Grid item>
-              <MDInput
-                label="Usuário"
-                fullWidth
-                value={responsible}
-                onChange={(e) => setResponsible(e.target.value.toUpperCase())}
-              />
-            </Grid>
-          </Grid>
-
-          <MDBox mt={2} display="flex" justifyContent="center">
-            <MDButton variant="gradient" color="info" type="submit">
-              <Icon sx={{ fontWeight: "bold" }}>vpn_key</Icon>
-              &nbsp;Gerar Senha
-            </MDButton>
-          </MDBox>
           <Grid container spacing={2} direction="column">
             <Grid item>
               <MDInput
@@ -91,6 +98,12 @@ const AddProduct = ({ onProductAdd }) => {
               />
             </Grid>
           </Grid>
+          <MDBox mt={2} display="flex" justifyContent="center">
+            <MDButton variant="gradient" color="infog" type="submit">
+              <Icon sx={{ fontWeight: "bold" }}>vpn_key</Icon>
+              &nbsp;Gerar Senha
+            </MDButton>
+          </MDBox>
         </form>
       </MDBox>
 

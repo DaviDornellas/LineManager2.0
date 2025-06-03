@@ -32,6 +32,9 @@ const AddProduct = ({ onProductAdd }) => {
 
     fetchBases();
   }, []);
+  const capitalizeWords = (str) => {
+    return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
@@ -45,7 +48,7 @@ const AddProduct = ({ onProductAdd }) => {
 
     try {
       const response = await apiCompor90.post("/compor90", {
-        NOME: nome.toUpperCase(),
+        NOME: capitalizeWords(nome),
         BASE: base.toUpperCase(),
       });
 
@@ -97,7 +100,7 @@ const AddProduct = ({ onProductAdd }) => {
             </Grid>
           </Grid>
           <MDBox mt={2} display="flex" justifyContent="center">
-            <MDButton variant="gradient" color="info" type="submit">
+            <MDButton variant="gradient" color="infog" type="submit">
               <Icon sx={{ fontWeight: "bold" }}>add</Icon>
               &nbsp;Adicionar Usuário
             </MDButton>

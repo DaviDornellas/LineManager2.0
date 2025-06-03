@@ -11,7 +11,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 
 import AddLine from "./components/AddDivision";
-import OrdersOverview from "./components/divisionTable";
+import EditDivision from "./components/editDivision/index";
 import LinesTableData from "layouts/division/data/LinesTableData";
 import api2 from "../../service/indexdivision"; // Importando API
 
@@ -116,6 +116,9 @@ function Dashboard() {
             </Grid>
             <Grid item xs={12} md={6} lg={8}>
               <LinesTableData />
+            </Grid>
+            <Grid item xs={12} md={12} lg={12}>
+              <EditDivision />
             </Grid>
           </Grid>
         </MDBox>

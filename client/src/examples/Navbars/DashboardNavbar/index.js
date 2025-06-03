@@ -106,7 +106,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
     }
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/logout", // ajuste a URL se necessário
+        "http://192.168.7.65:5000/api/auth/logout", // ajuste a URL se necessário
         {},
         {
           headers: {

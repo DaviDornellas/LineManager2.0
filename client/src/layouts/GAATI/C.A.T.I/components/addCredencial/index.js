@@ -39,6 +39,9 @@ const AddCredencial = ({ onCredencialAdd }) => {
 
     fetchBases();
   }, []);
+  const capitalizeWords = (str) => {
+    return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   const handleAddCredencial = async (e) => {
     e.preventDefault();
@@ -52,10 +55,9 @@ const AddCredencial = ({ onCredencialAdd }) => {
 
     try {
       const response = await apiCredencial.post("/credencial", {
-        Nome: nome.toUpperCase(),
+        Nome: capitalizeWords(nome),
         Office: `${obra.toUpperCase()}${centrocusto.toUpperCase()}`,
         Chamado: chamado.toUpperCase(),
-        VPN: ativo ? 1 : 0, // checkbox controlado
       });
 
       onCredencialAdd(response.data);
@@ -86,7 +88,7 @@ const AddCredencial = ({ onCredencialAdd }) => {
                 label="Nome"
                 fullWidth
                 value={nome}
-                onChange={(e) => setNome(e.target.value.toUpperCase())}
+                onChange={(e) => setNome(e.target.value)}
                 required
               />
             </Grid>
@@ -113,23 +115,12 @@ const AddCredencial = ({ onCredencialAdd }) => {
                 label="Chamado"
                 fullWidth
                 value={chamado}
-                onChange={(e) => setChamado(e.target.value.toUpperCase())}
+                onChange={(e) => {
+                  const onlyNumbers = e.target.value.replace(/\D/g, "").slice(0, 5);
+                  setChamado(onlyNumbers);
+                }}
+                inputProps={{ inputMode: "numeric", pattern: "[0-9]*", maxLength: 5 }}
                 required
-              />
-            </Grid>
-            <Grid item>
-              <MDTypography variant="h6" gutterBottom>
-                VPN
-              </MDTypography>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={ativo}
-                    onChange={(e) => setAtivo(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label="Ativo"
               />
             </Grid>
           </Grid>

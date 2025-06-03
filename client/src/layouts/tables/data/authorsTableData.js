@@ -2,7 +2,11 @@
 /* eslint-disable react/function-component-definition */
 
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
+import IconButton from "@mui/material/IconButton";
+import Icon from "@mui/material/Icon";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -15,13 +19,53 @@ export default function DataTableUsuarios() {
   const [rows, setRows] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const handleAdminLogout = async (userId) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.post(
+        `http://192.168.7.65:5000/api/auth/logout/${userId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Atualiza a lista de usuários após logout
+      const updatedUsers = allUsers.map((user) =>
+        user.id === userId ? { ...user, isLoggedIn: false } : user
+      );
+      setAllUsers(updatedUsers);
+      formatAndSetRows(updatedUsers);
+
+      // Atualiza a página para garantir que tudo seja recarregado
+      window.location.reload(); // Força o reload da página
+    } catch (error) {
+      console.error("Erro ao forçar logout:", error);
+    }
+  };
+
+  // Styles for the navbar icons
+  const iconsStyle = ({ palette: { dark, white, text }, functions: { rgba } }) => ({
+    color: () => {
+      let colorValue = light || darkMode ? white.main : dark.main;
+
+      if (transparentNavbar && !light) {
+        colorValue = darkMode ? rgba(text.main, 0.6) : text.main;
+      }
+
+      return colorValue;
+    },
+  });
 
   useEffect(() => {
     const fetchUsers = async () => {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await axios.get("http://localhost:5000/api/auth/users", {
+        const response = await axios.get("http://192.168.7.65:5000/api/auth/users", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -34,8 +78,14 @@ export default function DataTableUsuarios() {
         console.error("Erro ao carregar usuários:", error);
       }
     };
-
+    // Faz a primeira busca
     fetchUsers();
+
+    // Faz a busca a cada 10 segundos
+    const interval = setInterval(fetchUsers, 10000);
+
+    // Limpa o intervalo quando o componente desmonta
+    return () => clearInterval(interval);
   }, []);
 
   const formatAndSetRows = (users) => {
@@ -48,7 +98,7 @@ export default function DataTableUsuarios() {
         <MDBox ml={-1}>
           <MDBadge
             badgeContent={user.isLoggedIn ? "Online" : "Offline"}
-            color={user.isLoggedIn ? "info" : "secondary"}
+            color={user.isLoggedIn ? "success" : "infog"}
             variant="gradient"
             size="sm"
           />
@@ -72,8 +122,16 @@ export default function DataTableUsuarios() {
           Editar
         </MDTypography>
       ),
+      logout: (
+        <IconButton
+          onClick={() => handleAdminLogout(user.id)}
+          title="Forçar logout"
+          disabled={!user.isLoggedIn} // Desativa se estiver Offline
+        >
+          <Icon color={user.isLoggedIn ? "error" : "disabled"}>logout</Icon>
+        </IconButton>
+      ),
     }));
-
     setRows(formattedRows);
   };
 
@@ -113,6 +171,7 @@ export default function DataTableUsuarios() {
       { Header: "Status", accessor: "status", align: "center" },
       { Header: "Cadastro", accessor: "employed", align: "center" },
       { Header: "Ações", accessor: "action", align: "center" },
+      { Header: "logout", accessor: "logout", align: "center" },
     ],
     rows,
     searchInput: (

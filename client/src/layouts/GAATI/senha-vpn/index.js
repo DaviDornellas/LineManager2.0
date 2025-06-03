@@ -11,7 +11,7 @@ import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
-import Addsenhavpn from "./components/Addsenhavpn/index";
+import Addsenha from "./components/Addsenha/index";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import api from "../../../service/index"; // Importando API
 
@@ -69,11 +69,11 @@ function Dashboard() {
             coloredShadow="infog"
           >
             <MDTypography variant="h6" color="white">
-              Senha VPN
+              Senha
             </MDTypography>
           </MDBox>
           <Grid item xs={12} md={6} lg={8}>
-            <Addsenhavpn onProductAdd={handleProductAdd} />
+            <Addsenha onProductAdd={handleProductAdd} />
           </Grid>
         </Card>
       </MDBox>

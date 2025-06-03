@@ -13,7 +13,9 @@ const createTables = () => {
       password TEXT NOT NULL,
       role TEXT DEFAULT 'user',
       isLoggedIn BOOLEAN DEFAULT 0,
-      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      forcar_logout  BOOLEAN DEFAULT 0,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      last_login TEXT
     );
   `;
 
@@ -22,12 +24,17 @@ const createTables = () => {
     CREATE TABLE IF NOT EXISTS Divisions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       divisionName TEXT NOT NULL,
-      costCenter TEXT NOT NULL,
       divisionNumber TEXT NOT NULL,
-      responsibleCompany TEXT NOT NULL,
-      startDate DATE NOT NULL,
       status TEXT NOT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+  const createCostCenterTable = `
+    CREATE TABLE IF NOT EXISTS CostCenter(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      costCenter TEXT NOT NULL,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      divisionID INTEGER NOT NULL,
     );
   `;
 
@@ -64,7 +71,7 @@ const createTables = () => {
       Office TEXT,
       Usu_Rede TEXT,
       Chamado TEXT,
-      VPN INTEGER
+      url_chamado TEXT
     );
   `;
 

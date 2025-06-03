@@ -46,7 +46,7 @@ function Cover() {
     setErrorMessage(""); // Limpa mensagens de erro anteriores
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      await axios.post("http://192.168.7.65:5000/api/auth/register", {
         username,
         position,
         location,

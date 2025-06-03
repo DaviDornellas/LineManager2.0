@@ -1,6 +1,8 @@
 const express = require("express");
 const db = require("../database/db");
 const router = express.Router();
+const checkAuth = require("../middlewares/checkAuth");
+
 
 // Get all
 router.get("/compor90", (req, res) => {

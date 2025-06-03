@@ -41,7 +41,7 @@
     "react-github-btn": "1.4.0",
     "react-input-mask": "^2.0.4",
     "react-router-dom": "6.11.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-table": "7.8.0",
     "sequelize": "^6.37.6",
     "stylis": "4.1.4",
@@ -84,7 +84,8 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
-    "prettier": "2.8.8"
+    "prettier": "2.8.8",
+    "webpack-dev-server": "^5.2.1"
   },
   "overrides": {
     "svgo": "3.0.2"
