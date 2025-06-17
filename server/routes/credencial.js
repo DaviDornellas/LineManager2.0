@@ -21,15 +21,13 @@ router.post("/credencial", (req, res) => {
   const USUARIO = `${primeiroNome}.${ultimoNome}`;
 
   const url_chamado = `http://sgc.aterpa.com.br/glpi/front/ticket.form.php?id=${Chamado}`;
-  const VPN = 1;
-
 
   const query = `
-    INSERT INTO credencial (Nome, Office, Usu_Rede, Chamado, VPN, url_chamado)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO credencial (Nome, Office, Usu_Rede, Chamado,url_chamado)
+    VALUES (?, ?, ?, ?, ?)
   `;
 
-  db.run(query, [Nome, Office, USUARIO, Chamado, VPN, url_chamado], function (err) {
+  db.run(query, [Nome, Office, USUARIO, Chamado, url_chamado], function (err) {
     if (err) return res.status(500).json({ error: "Erro ao inserir credencial" });
     res.json({
       id: this.lastID,
@@ -38,25 +36,5 @@ router.post("/credencial", (req, res) => {
     });
   });
 });
-
-// Atualizar campo VPN
-router.put("/credencial/:code", (req, res) => {
-  const code = parseInt(req.params.code, 10);
-  const { VPN } = req.body;
-
-  const query = `UPDATE credencial SET VPN = ? WHERE Code = ?`;
-
-  db.run(query, [VPN, code], function (err) {
-    if (err) return res.status(500).json({ error: "Erro ao atualizar credencial" });
-
-    if (this.changes === 0) {
-      return res.status(404).json({ error: "Credencial não encontrada" });
-    }
-
-    res.json({ message: "Credencial atualizada com sucesso!" });
-    console.log("Atualizando VPN para o Code:", code, "Novo valor:", VPN);
-  });
-});
-
 
 module.exports = router;

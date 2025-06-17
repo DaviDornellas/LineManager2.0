@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridRowModes, GridActionsCellItem } from "@mui/x-data-grid";
-import { api2 } from "../../../service/indexdivision";
+import { api2 } from "../../../service/index";
 import { TextField, Button } from "@mui/material";
 import Card from "@mui/material/Card";
 import MDBox from "../../../components/MDBox";

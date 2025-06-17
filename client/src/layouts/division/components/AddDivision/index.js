@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api2 from "../../../../service/indexdivision";
+import { api2 } from "../../../../service/indexdivision";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
@@ -65,19 +65,20 @@ const AddProduct = ({ onProductAdd }) => {
           <Grid container spacing={2} direction="column">
             <Grid item>
               <MDInput
-                label="Nome da divisão"
-                fullWidth
-                value={divisionName}
-                onChange={(e) => setDivisionName(e.target.value.toUpperCase())}
-                required
-              />
-            </Grid>
-            <Grid item>
-              <MDInput
                 label="Número da divisão"
                 fullWidth
                 value={divisionNumber}
                 onChange={(e) => setDivisionNumber(e.target.value.toUpperCase())}
+                required
+                inputProps={{ maxLength: 4 }}
+              />
+            </Grid>
+            <Grid item>
+              <MDInput
+                label="Nome da divisão"
+                fullWidth
+                value={divisionName}
+                onChange={(e) => setDivisionName(e.target.value.toUpperCase())}
                 required
               />
             </Grid>

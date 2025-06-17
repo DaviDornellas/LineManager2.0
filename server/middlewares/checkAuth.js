@@ -17,7 +17,7 @@ function checkAuth(req, res, next) {
     const userId = decoded.id;
 
     db.get(
-      "SELECT isLoggedIn, forcar_logout FROM Users WHERE id = ?",
+      "SELECT isLoggedIn, forcar_logout, current_token FROM Users WHERE id = ?",
       [userId],
       (err, row) => {
         if (err) {
@@ -29,9 +29,8 @@ function checkAuth(req, res, next) {
         }
 
         if (row.forcar_logout === 1) {
-          // Faz logout forçado e reseta o forcar_logout
           db.run(
-            "UPDATE Users SET isLoggedIn = 0, forcar_logout = 0 WHERE id = ?",
+            "UPDATE Users SET isLoggedIn = 0, forcar_logout = 0, current_token = NULL WHERE id = ?",
             [userId],
             (err) => {
               if (err) {
@@ -40,9 +39,11 @@ function checkAuth(req, res, next) {
               return res.status(401).json({ error: "Usuário foi deslogado forçadamente" });
             }
           );
+        } else if (row.current_token !== token) {
+          return res.status(401).json({ error: "Token inválido: outro login já foi feito" });
         } else {
-          req.user = decoded; // adiciona os dados decodificados no `req.user` se quiser usar depois
-          next(); // continua para a próxima rota
+          req.user = decoded;
+          next();
         }
       }
     );

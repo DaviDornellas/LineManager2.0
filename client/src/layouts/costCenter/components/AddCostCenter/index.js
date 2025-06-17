@@ -1,26 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { apiPrimavera } from "../../../../../service/apiGAATI"; // API correta para compor90
-import { api2 } from "../../../../../service/indexdivision";
+import { api2 } from "../../../../service/indexdivision";
+import { apiCostCenter } from "../../../../service/indexdivision";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import Icon from "@mui/material/Icon";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import PropTypes from "prop-types";
-import Icon from "@mui/material/Icon";
 
-const AddPrimavera = ({ onPrimaveraAdd }) => {
+const AddCostCenter = ({ onCostCenterAdd }) => {
+  const [costCenter, setCostCenter] = useState("");
+  const [divisionNumber, setDivisionNumber] = useState("");
   const [divisions, setDivisions] = useState([]);
-  const [bases, setBases] = useState([]);
-  const [nome, setNome] = useState("");
-  const [base, setBase] = useState("");
-  const [selectedDivision, setSelectedDivision] = useState(null);
+
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
@@ -37,35 +35,26 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
 
     fetchDivisions();
   }, []);
-  const capitalizeWords = (str) => {
-    return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
-  };
-  const handleAddPrimavera = async (e) => {
+
+  const handleAddCostCenter = async (e) => {
     e.preventDefault();
-
-    if (!nome || !selectedDivision) {
-      setSnackbarMessage("Preencha todos os campos obrigatórios.");
-      setSnackbarSeverity("error");
-      setOpenSnackbar(true);
-      return;
-    }
-
     try {
-      const response = await apiPrimavera.post("/primavera", {
-        NOME: capitalizeWords(nome),
-        BASE: selectedDivision.divisionNumber, // Envia divisionNumber como BASE
+      const response = await apiCostCenter.post("/costcenter", {
+        costCenter: costCenter.toUpperCase(),
+        divisionNumber,
       });
 
-      onProductAdd(response.data);
-      setNome("");
-      setSelectedDivision(null);
+      onCostCenterAdd(response.data);
 
-      setSnackbarMessage("Usuário adicionado com sucesso!");
+      setCostCenter("");
+      setDivisionNumber("");
+
+      setSnackbarMessage("Centro de Custo adicionado com sucesso!");
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
     } catch (error) {
-      console.error("Erro ao adicionar usuário:", error);
-      setSnackbarMessage("Erro ao adicionar usuário. Tente novamente.");
+      console.error("Erro ao adicionar centro de custo:", error);
+      setSnackbarMessage("Erro ao adicionar Centro de Custo.");
       setSnackbarSeverity("error");
       setOpenSnackbar(true);
     }
@@ -75,36 +64,46 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
     <Card>
       <MDBox p={3}>
         <MDTypography variant="h6" gutterBottom>
-          Adicionar Usuário ao Primavera
+          Adicionar Centro de Custo
         </MDTypography>
-        <form onSubmit={handleAddPrimavera}>
+        <form onSubmit={handleAddCostCenter}>
           <Grid container spacing={2} direction="column">
-            <Grid item>
-              <MDInput
-                label="Nome do Usuário"
-                fullWidth
-                value={nome}
-                onChange={(e) => {
-                  const apenasLetras = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
-                  setNome(apenasLetras);
-                }}
-                required
-              />
-            </Grid>
             <Grid item>
               <Autocomplete
                 options={divisions}
                 getOptionLabel={(option) => `${option.divisionNumber} - ${option.divisionName}`}
-                value={selectedDivision}
-                onChange={(event, newValue) => setSelectedDivision(newValue)}
-                renderInput={(params) => <TextField {...params} label="Obra (Divisão)" required />}
+                value={divisions.find((d) => d.divisionNumber === divisionNumber) || null}
+                onChange={(event, newValue) => {
+                  setDivisionNumber(newValue ? newValue.divisionNumber : "");
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Obra (Divisão)"
+                    variant="outlined"
+                    required
+                    sx={{ height: "44px" }}
+                  />
+                )}
+                isOptionEqualToValue={(option, value) =>
+                  option.divisionNumber === value.divisionNumber
+                }
+              />
+            </Grid>
+            <Grid item>
+              <MDInput
+                label="Centro de Custo"
+                fullWidth
+                value={costCenter}
+                onChange={(e) => setCostCenter(e.target.value)}
+                required
               />
             </Grid>
           </Grid>
           <MDBox mt={2} display="flex" justifyContent="center">
             <MDButton variant="gradient" color="infog" type="submit">
               <Icon sx={{ fontWeight: "bold" }}>add</Icon>
-              &nbsp;Adicionar Usuário
+              &nbsp;Adicionar Centro de Custo
             </MDButton>
           </MDBox>
         </form>
@@ -122,8 +121,8 @@ const AddPrimavera = ({ onPrimaveraAdd }) => {
   );
 };
 
-AddPrimavera.propTypes = {
-  onPrimaveraAdd: PropTypes.func.isRequired,
+AddCostCenter.propTypes = {
+  onCostCenterAdd: PropTypes.func.isRequired,
 };
 
-export default AddPrimavera;
+export default AddCostCenter;

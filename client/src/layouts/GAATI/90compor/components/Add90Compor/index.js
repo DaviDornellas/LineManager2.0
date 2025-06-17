@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { apiCompor90 } from "../../../../../service/apiGAATI"; // API correta para compor90
+import { api2 } from "../../../../../service/indexdivision";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
@@ -12,25 +16,25 @@ import PropTypes from "prop-types";
 import Icon from "@mui/material/Icon";
 
 const AddProduct = ({ onProductAdd }) => {
+  const [divisions, setDivisions] = useState([]);
   const [bases, setBases] = useState([]);
   const [nome, setNome] = useState("");
-  const [base, setBase] = useState("");
+  const [selectedDivision, setSelectedDivision] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
-    const fetchBases = async () => {
+    const fetchDivisions = async () => {
       try {
-        const response = await apiCompor90.get("/compor90");
-        const uniqueBases = [...new Set(response.data.map((item) => item.BASE))];
-        setBases(uniqueBases);
+        const response = await api2.get("/division");
+        setDivisions(response.data);
       } catch (error) {
-        console.error("Erro ao buscar bases:", error);
+        console.error("Erro ao buscar divisões:", error);
       }
     };
 
-    fetchBases();
+    fetchDivisions();
   }, []);
   const capitalizeWords = (str) => {
     return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -39,7 +43,7 @@ const AddProduct = ({ onProductAdd }) => {
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
-    if (!nome || !base) {
+    if (!nome || !selectedDivision) {
       setSnackbarMessage("Preencha todos os campos obrigatórios.");
       setSnackbarSeverity("error");
       setOpenSnackbar(true);
@@ -49,12 +53,13 @@ const AddProduct = ({ onProductAdd }) => {
     try {
       const response = await apiCompor90.post("/compor90", {
         NOME: capitalizeWords(nome),
-        BASE: base.toUpperCase(),
+        BASE: selectedDivision.divisionNumber, // Envia divisionNumber como BASE
       });
 
       onProductAdd(response.data);
       setNome("");
-      setBase("");
+      setSelectedDivision(null);
+
       setSnackbarMessage("Usuário adicionado com sucesso!");
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
@@ -79,24 +84,21 @@ const AddProduct = ({ onProductAdd }) => {
                 label="Nome do Usuário"
                 fullWidth
                 value={nome}
-                onChange={(e) => setNome(e.target.value)}
+                onChange={(e) => {
+                  const apenasLetras = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
+                  setNome(apenasLetras);
+                }}
                 required
               />
             </Grid>
             <Grid item>
-              <MDInput
-                label="Base"
-                fullWidth
-                value={base}
-                onChange={(e) => setBase(e.target.value)}
-                required
-                list="base-options"
+              <Autocomplete
+                options={divisions}
+                getOptionLabel={(option) => `${option.divisionNumber} - ${option.divisionName}`}
+                value={selectedDivision}
+                onChange={(event, newValue) => setSelectedDivision(newValue)}
+                renderInput={(params) => <TextField {...params} label="Obra (Divisão)" required />}
               />
-              <datalist id="base-options">
-                {bases.map((b, idx) => (
-                  <option key={idx} value={b} />
-                ))}
-              </datalist>
             </Grid>
           </Grid>
           <MDBox mt={2} display="flex" justifyContent="center">

@@ -19,7 +19,7 @@ import authorsTableData from "./data/authorsTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 
 function Tables() {
-  const { columns, rows } = authorsTableData();
+  const { columns, rows, modal } = authorsTableData();
   const { columns: pColumns, rows: pRows } = projectsTableData();
 
   return (
@@ -82,6 +82,7 @@ function Tables() {
             </Card> 
           </Grid>*/}
         </Grid>
+        {modal}
       </MDBox>
     </DashboardLayout>
   );

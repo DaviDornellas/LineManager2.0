@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { apiCredencial } from "../../../../../service/apiGAATI"; // API correta para compor90
-
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
+import { apiCredencial } from "../../../../../service/apiGAATI";
+import { apiCostCenter } from "../../../../../service/indexdivision";
+import { api2 } from "../../../../../service/indexdivision";
+import { TextField, Grid, Autocomplete, Snackbar, Alert, Card } from "@mui/material";
 import Icon from "@mui/material/Icon";
 
 import MDBox from "components/MDBox";
@@ -21,23 +17,33 @@ const AddCredencial = ({ onCredencialAdd }) => {
   const [centrocusto, setCentroCusto] = useState("");
   const [obra, setObra] = useState("");
   const [chamado, setChamado] = useState("");
-  const [ativo, setAtivo] = useState(false); // false = 0, true = 1
+  const [divisions, setDivisions] = useState([]);
+  const [selectedDivision, setSelectedDivision] = useState("");
+  const [costCenters, setCostCenters] = useState([]);
+  const [selectedCostCenter, setSelectedCostCenter] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
-    const fetchBases = async () => {
+    const fetchDivisions = async () => {
       try {
-        const response = await apiCredencial.get("/credencial");
-        const uniqueBases = [...new Set(response.data.map((item) => item.BASE))];
-        setBases(uniqueBases);
+        const response = await api2.get("/division");
+        setDivisions(response.data);
       } catch (error) {
-        console.error("Erro ao buscar bases:", error);
+        console.error("Erro ao carregar divisões:", error);
       }
     };
-
-    fetchBases();
+    fetchDivisions();
+    const fetchCostCenter = async () => {
+      try {
+        const response = await apiCostCenter.get("/costcenter");
+        setCostCenters(response.data);
+      } catch (error) {
+        console.error("Erro ao carregar divisões:", error);
+      }
+    };
+    fetchCostCenter();
   }, []);
   const capitalizeWords = (str) => {
     return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -46,7 +52,7 @@ const AddCredencial = ({ onCredencialAdd }) => {
   const handleAddCredencial = async (e) => {
     e.preventDefault();
 
-    if (!nome || !centrocusto || !obra || !chamado) {
+    if (!nome || !selectedDivision || !selectedCostCenter || !chamado) {
       setSnackbarMessage("Preencha todos os campos obrigatórios.");
       setSnackbarSeverity("error");
       setOpenSnackbar(true);
@@ -54,17 +60,24 @@ const AddCredencial = ({ onCredencialAdd }) => {
     }
 
     try {
+      const officeCode =
+        selectedDivision.toUpperCase() + (selectedCostCenter?.costCenter || "").toUpperCase();
+      console.log({
+        Nome: capitalizeWords(nome),
+        Office: officeCode,
+        Chamado: chamado.toUpperCase(),
+      });
       const response = await apiCredencial.post("/credencial", {
         Nome: capitalizeWords(nome),
-        Office: `${obra.toUpperCase()}${centrocusto.toUpperCase()}`,
+        Office: officeCode,
         Chamado: chamado.toUpperCase(),
       });
 
       onCredencialAdd(response.data);
       setNome("");
-      setCentroCusto("");
-      setObra("");
       setChamado("");
+      setSelectedDivision("");
+      setSelectedCostCenter(null);
       setSnackbarMessage("Usuário adicionado com sucesso!");
       setSnackbarSeverity("success");
       setOpenSnackbar(true);
@@ -75,6 +88,34 @@ const AddCredencial = ({ onCredencialAdd }) => {
       setOpenSnackbar(true);
     }
   };
+
+  const handleDivisionSelect = async (event, value) => {
+    const divisionNumber = value ? value.divisionNumber : "";
+    setSelectedDivision(divisionNumber);
+
+    if (divisionNumber > "A100") {
+      // Se for maior que A100, define o centro de custo fixo como A005
+      setCostCenters([]);
+      setSelectedCostCenter({ id: "A005", costCenter: "A005" });
+    } else if (divisionNumber) {
+      // Caso contrário, carrega os centros de custo disponíveis
+      try {
+        const response = await apiCostCenter.get("/costcenter");
+        const filtered = response.data.filter((cc) => cc.divisionNumber === divisionNumber);
+        setCostCenters(filtered);
+        setSelectedCostCenter(null);
+      } catch (error) {
+        console.error("Erro ao buscar centros de custo:", error);
+      }
+    } else {
+      setCostCenters([]);
+      setSelectedCostCenter(null);
+    }
+  };
+  const handleCostCenterSelect = (event, value) => {
+    setSelectedCostCenter(value);
+  };
+
   return (
     <Card>
       <MDBox p={3}>
@@ -85,31 +126,46 @@ const AddCredencial = ({ onCredencialAdd }) => {
           <Grid container spacing={2} direction="column">
             <Grid item>
               <MDInput
-                label="Nome"
+                label="Nome do Usuário"
                 fullWidth
                 value={nome}
-                onChange={(e) => setNome(e.target.value)}
+                onChange={(e) => {
+                  const apenasLetras = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, "");
+                  setNome(apenasLetras);
+                }}
                 required
               />
             </Grid>
             <Grid item>
-              <MDInput
-                label="Obra"
+              <Autocomplete
+                value={divisions.find((d) => d.divisionNumber === selectedDivision) || null}
+                onChange={handleDivisionSelect}
+                options={divisions}
+                getOptionLabel={(option) => `${option.divisionNumber} - ${option.divisionName}`}
+                renderInput={(params) => (
+                  <TextField {...params} label="Selecionar Obra (Divisão)" variant="outlined" />
+                )}
+                isOptionEqualToValue={(option, value) =>
+                  option.divisionNumber === value.divisionNumber
+                }
                 fullWidth
-                value={obra}
-                onChange={(e) => setObra(e.target.value.toUpperCase())}
-                required
               />
             </Grid>
-            <Grid item>
-              <MDInput
-                label="Central de custo"
-                fullWidth
-                value={centrocusto}
-                onChange={(e) => setCentroCusto(e.target.value.toUpperCase())}
-                required
-              />
-            </Grid>
+            {selectedDivision && selectedDivision <= "A100" && (
+              <Grid item>
+                <Autocomplete
+                  value={selectedCostCenter}
+                  onChange={handleCostCenterSelect}
+                  options={costCenters}
+                  getOptionLabel={(option) => `${option.costCenter}`}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Selecionar Centro de Custo" variant="outlined" />
+                  )}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  fullWidth
+                />
+              </Grid>
+            )}
             <Grid item>
               <MDInput
                 label="Chamado"

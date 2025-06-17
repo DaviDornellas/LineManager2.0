@@ -23,6 +23,7 @@ dentro (rotas aninhadas), você precisa passar as rotas aninhadas dentro de uma 
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
 import Division from "layouts/division";
+import CostCenter from "layouts/costCenter";
 import Tablelines from "layouts/tablelines";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
@@ -38,6 +39,8 @@ import Consultar from "layouts/GAATI/consultar";
 import Senhavpn from "layouts/GAATI/senha-vpn";
 import Primavera from "layouts/GAATI/primavera";
 import HomePage from "layouts/HomePage";
+import SignUpAdm from "layouts/authentication/sign-upadm";
+import TransferHistory from "layouts/TransferHistory";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -52,6 +55,24 @@ const routes = [
     collapse: [
       {
         type: "collapse",
+        name: "Linhas",
+        key: "Linhas",
+        icon: <Icon fontSize="small">table_view</Icon>,
+        route: "/Linhas",
+        roles: ["admin", "editor", "reader"],
+        component: <Tablelines />,
+      },
+      {
+        type: "collapse",
+        name: "Editar Linha",
+        key: "Editar Linha",
+        icon: <Icon fontSize="small">edit</Icon>,
+        route: "/Editar-Linha",
+        roles: ["admin", "editor"],
+        component: <Editline />,
+      },
+      {
+        type: "collapse",
         name: "Linha",
         key: "dashboard",
         icon: <Icon fontSize="small">add</Icon>,
@@ -61,37 +82,28 @@ const routes = [
       },
       {
         type: "collapse",
-        name: "Editar Linha",
-        key: "editline",
-        icon: <Icon fontSize="small">edit</Icon>,
-        route: "/editline",
-        roles: ["admin", "editor"],
-        component: <Editline />,
-      },
-      {
-        type: "collapse",
-        name: "Linhas",
-        key: "tablelines",
-        icon: <Icon fontSize="small">table_view</Icon>,
-        route: "/tablelines",
+        name: "Transferências",
+        key: "Transferências",
+        icon: <Icon fontSize="small">move_down</Icon>,
+        route: "/transferencias",
         roles: ["admin", "editor", "reader"],
-        component: <Tablelines />,
+        component: <TransferHistory />,
       },
       {
         type: "collapse",
         name: "Rateio",
-        key: "billing",
+        key: "Rateio",
         icon: <Icon fontSize="small">receipt_long</Icon>,
-        route: "/billing",
+        route: "/Rateio",
         roles: ["admin", "editor", "reader"],
         component: <Billing />,
       },
       {
         type: "collapse",
         name: "Relatórios",
-        key: "report",
+        key: "Relatórios",
         icon: <Icon fontSize="small">description</Icon>,
-        route: "/report",
+        route: "/relatorios",
         roles: ["admin", "editor", "reader"],
         component: <Report />,
       },
@@ -133,11 +145,11 @@ const routes = [
       },
       {
         type: "collapse",
-        name: "Senhavpn",
-        key: "Senhavpn",
+        name: "Gerador de Senha",
+        key: "Gerador de Senha",
         roles: ["admin"],
         icon: <Icon fontSize="small">https</Icon>,
-        route: "/Senha-vpn",
+        route: "/password-generator",
         component: <Senhavpn />,
       },
       {
@@ -150,6 +162,9 @@ const routes = [
         component: <Consultar />,
       },
     ],
+  },
+  {
+    type: "divider",
   },
   // {
   //   type: "collapse",
@@ -164,25 +179,43 @@ const routes = [
     name: "Administração",
     key: "AdministraçãoSGL",
     icon: <Icon fontSize="small">lock</Icon>,
-    roles: ["admin", "editor"],
+    roles: ["admin"],
     collapse: [
       {
         type: "collapse",
         name: "Obras",
-        key: "division",
+        key: "Obras",
         icon: <Icon fontSize="small">add_home_work</Icon>,
-        route: "/division",
+        route: "/Obras",
         roles: ["admin"],
         component: <Division />,
       },
       {
         type: "collapse",
+        name: "Centro de Custo",
+        key: "Centro de Custo",
+        icon: <Icon fontSize="small">add_home_work</Icon>,
+        route: "/Centro-de-Custo",
+        roles: ["admin"],
+        component: <CostCenter />,
+      },
+      {
+        type: "collapse",
         name: "Usuarios",
-        key: "tables",
+        key: "Usuarios",
         icon: <Icon fontSize="small">group</Icon>,
-        route: "/tables",
+        route: "/Usuarios",
         roles: ["admin"],
         component: <Tables />,
+      },
+      {
+        type: "collapse",
+        name: "Adicionar Usuário",
+        key: "Adicionar Usuário",
+        icon: <Icon fontSize="small">person_add</Icon>,
+        route: "/Adicionar-Usuario",
+        roles: ["admin"],
+        component: <SignUpAdm />,
       },
     ],
   },
@@ -198,7 +231,7 @@ const routes = [
     name: "HomePage",
     key: "HomePage",
     icon: <Icon fontSize="small">person</Icon>,
-    route: "/HomePage",
+    route: "/",
     component: <HomePage />,
   },
   {
@@ -213,6 +246,7 @@ const routes = [
     key: "sign-up",
     icon: <Icon fontSize="small">assignment</Icon>,
     route: "/authentication/sign-up",
+    roles: ["admin"],
     component: <SignUp />,
   },
 ];

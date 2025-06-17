@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiCredencial } from "../../../../../service/apiGAATI"; // API correta para compor90
-import api2 from "../../../../../service/indexdivision";
+import { api2 } from "../../../../../service/indexdivision";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
@@ -20,11 +20,6 @@ const AddProduct = ({ onProductAdd }) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const [divisions, setDivisions] = useState([]);
-  const [product, setProduct] = useState({
-    // outros campos...
-    userCredencial: "",
-  });
 
   useEffect(() => {
     const fetchDivisions = async () => {
@@ -38,11 +33,6 @@ const AddProduct = ({ onProductAdd }) => {
 
     fetchDivisions();
   }, []);
-
-  const divisionOptions = divisions.map((div) => ({
-    label: `${div.Code} - ${div.Usu_Rede} - VPN: ${div.VPN}`,
-    value: div.Code,
-  }));
 
   const generatePassword = () => {
     const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -14,8 +14,9 @@ const createTables = () => {
       role TEXT DEFAULT 'user',
       isLoggedIn BOOLEAN DEFAULT 0,
       forcar_logout  BOOLEAN DEFAULT 0,
-      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-      last_login TEXT
+      last_login TEXT,
+      current_token TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `;
 
@@ -24,19 +25,21 @@ const createTables = () => {
     CREATE TABLE IF NOT EXISTS Divisions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       divisionName TEXT NOT NULL,
-      divisionNumber TEXT NOT NULL,
+      divisionNumber TEXT NOT NULL UNIQUE,
       status TEXT NOT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `;
   const createCostCenterTable = `
-    CREATE TABLE IF NOT EXISTS CostCenter(
+    CREATE TABLE IF NOT EXISTS CostCenter (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       costCenter TEXT NOT NULL,
-      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-      divisionID INTEGER NOT NULL,
+      divisionNumber TEXT NOT NULL,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (divisionNumber) REFERENCES Divisions(divisionNumber)
     );
   `;
+
 
   // Criação da tabela de Produtos
   const createProductsTable = `
@@ -46,12 +49,23 @@ const createTables = () => {
       artwork TEXT NOT NULL,
       operator TEXT NOT NULL,
       destiwork TEXT NOT NULL,
-      phoneNumber TEXT NOT NULL,
+      phoneNumber TEXT NOT NULL UNIQUE,
       date DATE NOT NULL,
       category TEXT NOT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `;
+
+   const createTransferHistoryTable = `
+    CREATE TABLE IF NOT EXISTS TransferHistory (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      productId INTEGER NOT NULL,
+      fromWork TEXT NOT NULL,
+      toWork TEXT NOT NULL,
+      transferDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (productId) REFERENCES Products(id)
+    );
+   `;
 
   // Tabela compor90
   const createCompor90Table = `
@@ -90,9 +104,11 @@ const createTables = () => {
   db.serialize(() => {
     db.run(createUsersTable);
     db.run(createDivisionsTable);
+    db.run(createCostCenterTable);
     db.run(createProductsTable);
     db.run(createCompor90Table);
     db.run(createCredencialTable);
+    db.run(createTransferHistoryTable);
     db.run(createPrimaveraTable, (err) => {
       if (err) {
         console.error("Erro ao criar tabelas:", err.message);

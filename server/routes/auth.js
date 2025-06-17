@@ -41,12 +41,13 @@ router.post("/login", (req, res) => {
     bcrypt.compare(password, row.password, (err, isValid) => {
       if (!isValid) return res.status(401).json({ error: "Senha incorreta" });
 
-      const token = jwt.sign({ id: row.id, role: row.role }, secretKey, { expiresIn: "20m" });
+      const token = jwt.sign({ id: row.id, role: row.role }, secretKey, { expiresIn: "15m" });
       const now = new Date().toISOString();
 
-      db.run("UPDATE Users SET last_login = ?, isLoggedIn = 1 WHERE id = ?", [now, row.id], (err) => {
-        if (err) console.error("Erro ao atualizar login:", err);
-      });
+      db.run("UPDATE Users SET last_login = ?, isLoggedIn = 1, current_token = ? WHERE id = ?",
+        [now, token, row.id], (err) => {
+          if (err) console.error("Erro ao atualizar login:", err);
+        });
 
       res.json({ token, role: row.role });
     });
@@ -179,5 +180,48 @@ router.post("/logout/:id", checkAuth, (req, res) => {
     res.json({ message: `Usuário ${userId} foi deslogado com sucesso` });
   });
 });
+
+// Atualizar dados do usuário (com opção de atualizar senha)
+router.put("/users/:id", checkAuth, (req, res) => {
+  const { id } = req.params;
+  const { username, position, location, email, role, password } = req.body;
+
+  // Verificar se o usuário existe
+  db.get("SELECT * FROM Users WHERE id = ?", [id], (err, user) => {
+    if (err) return res.status(500).json({ error: "Erro ao buscar usuário" });
+    if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
+
+    // Função para executar a atualização (com ou sem nova senha)
+    const updateUser = (hashedPassword = null) => {
+      const query = `
+        UPDATE Users
+        SET username = ?, position = ?, location = ?, email = ?, role = ?
+        ${hashedPassword ? ", password = ?" : ""}
+        WHERE id = ?
+      `;
+
+      const params = hashedPassword
+        ? [username, position, location, email, role, hashedPassword, id]
+        : [username, position, location, email, role, id];
+
+      db.run(query, params, function (err) {
+        if (err) return res.status(500).json({ error: "Erro ao atualizar usuário" });
+
+        res.json({ message: "Usuário atualizado com sucesso" });
+      });
+    };
+
+    // Se uma nova senha foi enviada, criptografa antes de salvar
+    if (password && password.trim() !== "") {
+      bcrypt.hash(password, 10, (err, hashedPassword) => {
+        if (err) return res.status(500).json({ error: "Erro ao criptografar nova senha" });
+        updateUser(hashedPassword);
+      });
+    } else {
+      updateUser();
+    }
+  });
+});
+
 
 module.exports = router;

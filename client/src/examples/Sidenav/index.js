@@ -1,8 +1,7 @@
-import { useEffect } from "react";
-
+import { useState, useEffect } from "react";
+import axios from "axios";
 // react-router-dom components
-import { useLocation, NavLink } from "react-router-dom";
-
+import { useLocation, NavLink, useNavigate } from "react-router-dom";
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
 
@@ -47,7 +46,34 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
+  const navigate = useNavigate();
 
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    try {
+      await axios.post(
+        "http://192.168.7.65:5000/api/auth/logout", // ajuste a URL se necessário
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      localStorage.removeItem("token");
+      navigate("/login");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      // Mesmo que o logout falhe, remover o token e redirecionar é mais seguro
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
+  };
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
     function handleMiniSidenav() {
@@ -206,6 +232,18 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         }
       />
       <List>{renderRoutes}</List>
+      <MDBox p={2} mt="auto">
+        <MDButton
+          onClick={handleLogout}
+          target="_blank"
+          rel="noreferrer"
+          variant="gradient"
+          color="error"
+          fullWidth
+        >
+          Sair
+        </MDButton>
+      </MDBox>
     </SidenavRoot>
   );
 }

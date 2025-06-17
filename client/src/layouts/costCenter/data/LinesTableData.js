@@ -89,6 +89,7 @@ const ListDivision = () => {
         ];
       },
     },
+    { field: "id", headerName: "ID", flex: 0.2, editable: false },
     { field: "divisionNumber", headerName: "Numero da Obra ", flex: 0.8, editable: true },
     { field: "divisionName", headerName: "Nome da Divisão", flex: 1.9, editable: true },
     { field: "status", headerName: "Status", flex: 0.7, editable: true },
@@ -101,14 +102,14 @@ const ListDivision = () => {
     <Card>
       <MDBox p={4} display="flex" gap={2}>
         <TextField
-          label="Filtrar por Nome"
+          label="Filtrar por Nome da Divisão"
           variant="outlined"
           size="small"
           value={searchDivisionName}
           onChange={(e) => setSearchDivisionName(e.target.value)}
         />
         <TextField
-          label="Filtrar por Número"
+          label="Filtrar por Número da Divisão"
           variant="outlined"
           size="small"
           value={searchDivisionNumber}

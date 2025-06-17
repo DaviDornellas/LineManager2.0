@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../../service/index";
-import api2 from "../../../../service/indexdivision";
+import { api2 } from "../../../../service/indexdivision";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";

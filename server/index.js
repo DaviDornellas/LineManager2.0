@@ -7,6 +7,7 @@ const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/produto");
 const authMiddleware = require("./middlewares/authMiddleware");
 const divisionRoutes = require("./routes/division");
+const costCenterRoutes = require("./routes/costCenter");
 const compor90Routes = require("./routes/compor90");
 const credencialRoutes = require("./routes/credencial");
 const primaveraRoutes = require("./routes/primavera");
@@ -23,6 +24,7 @@ app.use(morgan("dev"));
 // 🔓 Rotas públicas (Login e Cadastro)
 app.use("/api/auth", authRoutes);
 app.use("/api/division", divisionRoutes);
+app.use("/api/costcenter", costCenterRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/compor90", compor90Routes);
 app.use("/api/credencial", credencialRoutes);

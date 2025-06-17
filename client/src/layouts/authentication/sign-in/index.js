@@ -49,7 +49,7 @@ function Login() {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.role);
       // Redireciona para o dashboard
-      navigate("/HomePage");
+      navigate("/");
     } catch (error) {
       setErrorMessage("Email ou Senha incorretos.");
     }
@@ -118,7 +118,7 @@ function Login() {
                 Entrar
               </MDButton>
             </MDBox>
-            <MDBox mt={3} mb={1} textAlign="center">
+            {/* <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
                 Não tem uma conta?{" "}
                 <MDTypography
@@ -132,7 +132,7 @@ function Login() {
                   Sign up
                 </MDTypography>
               </MDTypography>
-            </MDBox>
+            </MDBox> */}
           </MDBox>
         </MDBox>
       </Card>

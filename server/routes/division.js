@@ -17,18 +17,16 @@ router.get("/division", (req, res) => {
 
 // Create a new division
 router.post("/division", (req, res) => {
-  const { divisionName, divisionNumber, client, status } = req.body;
-
-  const costCenter = "A005"
+  const { divisionName, divisionNumber, status } = req.body;
   
   // Prepara a consulta para inserir uma nova divisão
   const query = `
-    INSERT INTO Divisions (divisionName, costCenter, divisionNumber, client, status, createdAt)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO Divisions (divisionName, divisionNumber, status, createdAt)
+    VALUES (?, ?, ?, ?)
   `;
 
   // Insere a nova divisão no banco de dados
-  db.run(query, [divisionName, costCenter, divisionNumber, client, status, new Date()], function (err) {
+  db.run(query, [divisionName, divisionNumber, status, new Date()], function (err) {
     if (err) {
       return res.status(500).json({ error: "Erro ao adicionar divisão" });
     }
@@ -45,15 +43,15 @@ router.post("/division", (req, res) => {
 // Update an existing division
 router.put("/division/:id", (req, res) => {
   const { id } = req.params;
-  const { divisionName, divisionNumber, client, status } = req.body;
+  const { divisionName, divisionNumber, status } = req.body;
 
   const query = `
     UPDATE Divisions
-    SET divisionName = ?, divisionNumber = ?, client = ?, status = ?
+    SET divisionName = ?, divisionNumber = ?, status = ?
     WHERE id = ?
   `;
 
-  db.run(query, [divisionName, divisionNumber, client, status, id], function (err) {
+  db.run(query, [divisionName, divisionNumber, status, id], function (err) {
     if (err) {
       return res.status(500).json({ error: "Erro ao atualizar divisão" });
     }

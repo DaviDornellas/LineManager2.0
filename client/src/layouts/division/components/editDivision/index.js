@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { TextField, Button, Autocomplete, Snackbar, Alert, MenuItem } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import api2 from "../../../../service/indexdivision";
+import { api2 } from "../../../../service/indexdivision";
 import Card from "@mui/material/Card";
 import MDBox from "../../../../components/MDBox";
 import InputMask from "react-input-mask";

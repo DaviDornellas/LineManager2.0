@@ -7,18 +7,26 @@ import axios from "axios";
 
 import IconButton from "@mui/material/IconButton";
 import Icon from "@mui/material/Icon";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
-// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDAvatar from "components/MDAvatar";
 import MDBadge from "components/MDBadge";
-import MDInput from "components/MDInput"; // input do MD2
+import MDInput from "components/MDInput";
+import MDButton from "components/MDButton";
 
 export default function DataTableUsuarios() {
   const [rows, setRows] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [editingUser, setEditingUser] = useState(null);
+  const [openEdit, setOpenEdit] = useState(false);
+
   const handleAdminLogout = async (userId) => {
     const token = localStorage.getItem("token");
 
@@ -33,32 +41,17 @@ export default function DataTableUsuarios() {
         }
       );
 
-      // Atualiza a lista de usuários após logout
       const updatedUsers = allUsers.map((user) =>
         user.id === userId ? { ...user, isLoggedIn: false } : user
       );
       setAllUsers(updatedUsers);
       formatAndSetRows(updatedUsers);
 
-      // Atualiza a página para garantir que tudo seja recarregado
-      window.location.reload(); // Força o reload da página
+      window.location.reload();
     } catch (error) {
       console.error("Erro ao forçar logout:", error);
     }
   };
-
-  // Styles for the navbar icons
-  const iconsStyle = ({ palette: { dark, white, text }, functions: { rgba } }) => ({
-    color: () => {
-      let colorValue = light || darkMode ? white.main : dark.main;
-
-      if (transparentNavbar && !light) {
-        colorValue = darkMode ? rgba(text.main, 0.6) : text.main;
-      }
-
-      return colorValue;
-    },
-  });
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -72,21 +65,46 @@ export default function DataTableUsuarios() {
         });
 
         const users = response.data;
-        setAllUsers(users); // guarda todos os usuários
+        setAllUsers(users);
         formatAndSetRows(users);
       } catch (error) {
         console.error("Erro ao carregar usuários:", error);
       }
     };
-    // Faz a primeira busca
+
     fetchUsers();
-
-    // Faz a busca a cada 10 segundos
     const interval = setInterval(fetchUsers, 10000);
-
-    // Limpa o intervalo quando o componente desmonta
     return () => clearInterval(interval);
   }, []);
+
+  const handleOpenEdit = (user) => {
+    setEditingUser({ ...user });
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+    setEditingUser(null);
+  };
+
+  const handleSaveEdit = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.put(`http://192.168.7.65:5000/api/auth/users/${editingUser.id}`, editingUser, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const updatedUsers = allUsers.map((u) => (u.id === editingUser.id ? { ...editingUser } : u));
+      setAllUsers(updatedUsers);
+      formatAndSetRows(updatedUsers);
+      handleCloseEdit();
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
+    }
+  };
 
   const formatAndSetRows = (users) => {
     const formattedRows = users.map((user) => ({
@@ -98,7 +116,7 @@ export default function DataTableUsuarios() {
         <MDBox ml={-1}>
           <MDBadge
             badgeContent={user.isLoggedIn ? "Online" : "Offline"}
-            color={user.isLoggedIn ? "success" : "infog"}
+            color={user.isLoggedIn ? "success" : "secondary"}
             variant="gradient"
             size="sm"
           />
@@ -118,15 +136,15 @@ export default function DataTableUsuarios() {
         </MDTypography>
       ),
       action: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-          Editar
-        </MDTypography>
+        <IconButton onClick={() => handleOpenEdit(user)} title="Editar">
+          <Icon>edit</Icon>
+        </IconButton>
       ),
       logout: (
         <IconButton
           onClick={() => handleAdminLogout(user.id)}
           title="Forçar logout"
-          disabled={!user.isLoggedIn} // Desativa se estiver Offline
+          disabled={!user.isLoggedIn}
         >
           <Icon color={user.isLoggedIn ? "error" : "disabled"}>logout</Icon>
         </IconButton>
@@ -166,12 +184,12 @@ export default function DataTableUsuarios() {
     columns: [
       { Header: "Usuário", accessor: "author", width: "45%", align: "left" },
       { Header: "Função", accessor: "function", align: "left" },
-      { Header: "Area", accessor: "area", align: "center" },
+      { Header: "Área", accessor: "area", align: "center" },
       { Header: "Grupo", accessor: "roles", align: "center" },
       { Header: "Status", accessor: "status", align: "center" },
       { Header: "Cadastro", accessor: "employed", align: "center" },
       { Header: "Ações", accessor: "action", align: "center" },
-      { Header: "logout", accessor: "logout", align: "center" },
+      { Header: "Logout", accessor: "logout", align: "center" },
     ],
     rows,
     searchInput: (
@@ -184,6 +202,63 @@ export default function DataTableUsuarios() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </MDBox>
+    ),
+    modal: (
+      <Dialog open={openEdit} onClose={handleCloseEdit}>
+        <DialogTitle>Editar Usuário</DialogTitle>
+        <DialogContent>
+          <MDInput
+            label="Nome"
+            fullWidth
+            margin="normal"
+            value={editingUser?.username || ""}
+            onChange={(e) => setEditingUser((prev) => ({ ...prev, username: e.target.value }))}
+          />
+          <MDInput
+            label="Cargo"
+            fullWidth
+            margin="normal"
+            value={editingUser?.position || ""}
+            onChange={(e) => setEditingUser((prev) => ({ ...prev, position: e.target.value }))}
+          />
+          <MDInput
+            label="Localização"
+            fullWidth
+            margin="normal"
+            value={editingUser?.location || ""}
+            onChange={(e) => setEditingUser((prev) => ({ ...prev, location: e.target.value }))}
+          />
+          <MDInput
+            label="Email"
+            fullWidth
+            margin="normal"
+            value={editingUser?.email || ""}
+            onChange={(e) => setEditingUser((prev) => ({ ...prev, email: e.target.value }))}
+          />
+          <MDInput
+            label="Função"
+            fullWidth
+            margin="normal"
+            value={editingUser?.role || ""}
+            onChange={(e) => setEditingUser((prev) => ({ ...prev, role: e.target.value }))}
+          />
+          <MDInput
+            label="Nova senha (opcional)"
+            type="password"
+            fullWidth
+            margin="normal"
+            onChange={(e) => setEditingUser((prev) => ({ ...prev, password: e.target.value }))}
+          />
+        </DialogContent>
+        <DialogActions>
+          <MDButton onClick={handleCloseEdit} color="error">
+            Cancelar
+          </MDButton>
+          <MDButton onClick={handleSaveEdit} variant="contained" color="infog">
+            Salvar
+          </MDButton>
+        </DialogActions>
+      </Dialog>
     ),
   };
 }

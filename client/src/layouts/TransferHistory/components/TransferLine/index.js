@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Autocomplete, Snackbar, Alert, MenuItem } from "@mui/material";
+import { TextField, Button, Autocomplete, Snackbar, Alert, MenuItem, Icon } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
-import api from "../../../service/index";
-import { api2 } from "../../../service/indexdivision";
+import api from "../../../../service/index";
+import { api2 } from "../../../../service/indexdivision";
 import Card from "@mui/material/Card";
-import MDBox from "../../../components/MDBox";
+import MDBox from "../../../../components/MDBox";
 import InputMask from "react-input-mask";
 
 const ListProducts = () => {
@@ -19,29 +19,29 @@ const ListProducts = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
+  const fetchData = async () => {
+    try {
+      const [productsResponse, obrasResponse] = await Promise.all([
+        api.get("/produtos"),
+        api2.get("/division"),
+      ]);
+
+      setProducts(productsResponse.data);
+
+      // Transformar as obras para formato compatível com o Autocomplete
+      const obrasFormatadas = obrasResponse.data.map((div) => ({
+        label: `${div.divisionNumber} - ${div.divisionName}`,
+        value: `${div.divisionNumber}`, // ou o identificador se preferir
+      }));
+      setListaDeObras(obrasFormatadas);
+    } catch (err) {
+      setError("Erro ao buscar produtos ou obras");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [productsResponse, obrasResponse] = await Promise.all([
-          api.get("/produtos"),
-          api2.get("/division"),
-        ]);
-
-        setProducts(productsResponse.data);
-
-        // Transformar as obras para formato compatível com o Autocomplete
-        const obrasFormatadas = obrasResponse.data.map((div) => ({
-          label: `${div.divisionNumber} - ${div.divisionName}`,
-          value: `${div.divisionNumber}`, // ou o identificador se preferir
-        }));
-        setListaDeObras(obrasFormatadas);
-      } catch (err) {
-        setError("Erro ao buscar produtos ou obras");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -57,7 +57,6 @@ const ListProducts = () => {
       [name]: value,
     }));
   };
-
   const handleSave = async () => {
     try {
       const payload = {
@@ -66,7 +65,22 @@ const ListProducts = () => {
         destiwork: editedProduct.destiwork || "",
       };
 
+      // Verifica se a obra mudou
+      const houveTransferencia = selectedProduct.artwork !== editedProduct.destiwork;
+
+      // Atualiza o produto
       await api.put(`/produtos/${editedProduct.id}`, payload);
+
+      // Registra histórico de transferência (se mudou)
+      if (houveTransferencia) {
+        await api.post("/produtos/transferir", {
+          productId: editedProduct.id,
+          fromWork: selectedProduct.artwork,
+          toWork: editedProduct.destiwork,
+        });
+      }
+
+      await fetchData(); // 🔄 Recarrega os dados sem dar reload
 
       const updatedProducts = products.map((product) =>
         product.id === editedProduct.id ? payload : product
@@ -118,21 +132,10 @@ const ListProducts = () => {
 
         {selectedProduct && (
           <MDBox mt={2}>
-            <TextField
-              label="Responsável"
-              variant="outlined"
-              fullWidth
-              value={editedProduct.responsible || ""}
-              name="responsible"
-              onChange={handleInputChange}
-              margin="normal"
-            />
             <Autocomplete
               options={listaDeObras}
               value={listaDeObras.find((obra) => obra.value === editedProduct.artwork) || null}
-              onChange={(event, newValue) =>
-                setEditedProduct((prev) => ({ ...prev, artwork: newValue?.value || "" }))
-              }
+              disabled // 🔒 Impede seleção e digitação
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -143,7 +146,9 @@ const ListProducts = () => {
                 />
               )}
             />
-
+            <MDBox display="flex" justifyContent="center" alignItems="center" my={2}>
+              <Icon>arrow_downward</Icon>
+            </MDBox>
             <Autocomplete
               options={listaDeObras}
               value={listaDeObras.find((obra) => obra.value === editedProduct.destiwork) || null}
@@ -160,55 +165,6 @@ const ListProducts = () => {
                 />
               )}
             />
-
-            <TextField
-              label="Telefone"
-              variant="outlined"
-              fullWidth
-              value={formatPhoneNumber(editedProduct.phoneNumber)} // Apenas visualmente formatado
-              name="phoneNumber"
-              onChange={handleInputChange} // Mantém o valor original sem formatação no estado
-              margin="normal"
-            />
-            <TextField
-              select
-              label="Operadora"
-              variant="outlined"
-              fullWidth
-              value={editedProduct.operator || ""}
-              name="operator"
-              onChange={handleInputChange}
-              margin="normal"
-              SelectProps={{ sx: { height: "44px" } }}
-            >
-              <MenuItem value="VIVO">VIVO</MenuItem>
-              <MenuItem value="TIM">TIM</MenuItem>
-              <MenuItem value="CLARO">CLARO</MenuItem>
-            </TextField>
-            <TextField
-              label="Data"
-              variant="outlined"
-              fullWidth
-              value={editedProduct.date || ""}
-              name="date"
-              onChange={handleInputChange}
-              margin="normal"
-            />
-            <TextField
-              select
-              label="Categoria"
-              variant="outlined"
-              fullWidth
-              value={editedProduct.category || ""}
-              name="category"
-              onChange={handleInputChange}
-              margin="normal"
-              SelectProps={{ sx: { height: "44px" } }}
-            >
-              <MenuItem value="Habilitada">Habilitada</MenuItem>
-              <MenuItem value="Desabilitada">Desabilitada</MenuItem>
-            </TextField>
-
             <MDBox mt={2}>
               <Button variant="gradient" color="dark" startIcon={<SaveIcon />} onClick={handleSave}>
                 Salvar
