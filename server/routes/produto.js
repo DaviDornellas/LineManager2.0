@@ -18,11 +18,11 @@ router.get("/produtos", (req, res) => {
 
 // Criar produto
 router.post("/produtos", (req, res) => {
-  const { responsible, artwork, destiwork, operator, phoneNumber, date, category } = req.body;
-  const query = `INSERT INTO Products (responsible, artwork, destiwork, operator, phoneNumber, date, category) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const { responsible, artwork, destiwork, operator, phoneNumber, date, category, iccid } = req.body;
+  const query = `INSERT INTO Products (responsible, artwork, destiwork, operator, phoneNumber, iccid, date, category) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-  db.run(query, [responsible, artwork, destiwork, operator, phoneNumber, date, category], function (err) {
+  db.run(query, [responsible, artwork, destiwork, operator, phoneNumber, iccid, date, category], function (err) {
     if (err) {
       return res.status(500).json({ error: "Erro ao adicionar produto" });
     }
@@ -45,17 +45,17 @@ router.delete("/produtos/:id", (req, res) => {
 // Atualizar produto
 router.put("/produtos/:id", (req, res) => {
   const { id } = req.params;
-  const { responsible, artwork, destiwork, operator, phoneNumber, date, category } = req.body;
+  const { responsible, artwork, destiwork, operator, phoneNumber, date, category, iccid } = req.body;
 
   const query = `
     UPDATE Products 
-    SET responsible = ?, artwork = ?, destiwork = ?, operator = ?, phoneNumber = ?, date = ?, category = ?
+    SET responsible = ?, artwork = ?, destiwork = ?, operator = ?, phoneNumber = ?, date = ?, category = ?, iccid = ?
     WHERE id = ?
   `;
 
   db.run(
     query,
-    [responsible, artwork, destiwork, operator, phoneNumber, date, category, id],
+    [responsible, artwork, destiwork, operator, phoneNumber, date, category, iccid, id],
     function (err) {
       if (err) {
         return res.status(500).json({ error: "Erro ao atualizar produto" });

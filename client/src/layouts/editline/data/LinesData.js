@@ -171,6 +171,15 @@ const ListProducts = () => {
               margin="normal"
             />
             <TextField
+              label="ICCID"
+              variant="outlined"
+              fullWidth
+              value={editedProduct.iccid || ""}
+              name="iccid"
+              onChange={handleInputChange}
+              margin="normal"
+            />
+            <TextField
               select
               label="Operadora"
               variant="outlined"

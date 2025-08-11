@@ -50,6 +50,7 @@ const createTables = () => {
       operator TEXT NOT NULL,
       destiwork TEXT NOT NULL,
       phoneNumber TEXT NOT NULL UNIQUE,
+      iccid TEXT NOT NULL,
       date DATE NOT NULL,
       category TEXT NOT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP

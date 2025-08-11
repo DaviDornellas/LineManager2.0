@@ -1,19 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridRowModes, GridActionsCellItem } from "@mui/x-data-grid";
-import { TextField, Typography, Card } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import CancelIcon from "@mui/icons-material/Close";
+import { TextField, Typography, Card, Button } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+//API PRIMAVERA
 import { apiPrimavera } from "../../../../service/apiGAATI";
 import MDBox from "../../../../components/MDBox";
 
-const TableCompor90 = () => {
+const TablePrimavera = () => {
   const [rows, setRows] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [rowModesModel, setRowModesModel] = useState({});
   const [searchName, setSearchName] = useState("");
   const [searchBase, setSearchBase] = useState("");
   const [editingRowId, setEditingRowId] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -22,7 +30,7 @@ const TableCompor90 = () => {
         const response = await apiPrimavera.get("/primavera");
         setRows(response.data);
       } catch (err) {
-        setError("Erro ao buscar dados do Compor90");
+        setError("Erro ao buscar dados do Primavera");
       }
     };
 
@@ -35,37 +43,14 @@ const TableCompor90 = () => {
       row.BASE.toLowerCase().includes(searchBase.toLowerCase())
   );
 
-  const handleEditClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-    setEditingRowId(id);
+  const handleViewClick = (product) => () => {
+    setSelectedProduct(product);
+    setOpenDialog(true);
   };
 
-  const handleSaveClick = (id) => async () => {
-    const updatedRow = rows.find((row) => row.CODE === id);
-    try {
-      await apiCompor90.put(`/${id}`, updatedRow);
-      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-      setEditingRowId(null);
-    } catch (error) {
-      console.error("Erro ao salvar dados:", error);
-    }
-  };
-
-  const handleCancelClick = (id) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
-    setEditingRowId(null);
-  };
-
-  const handleDeleteClick = (id) => async () => {
-    try {
-      await apiCompor90.delete(`/${id}`);
-      setRows(rows.filter((row) => row.CODE !== id));
-    } catch (error) {
-      console.error("Erro ao deletar registro:", error);
-    }
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedProduct(null);
   };
 
   const processRowUpdate = (newRow) => {
@@ -80,31 +65,15 @@ const TableCompor90 = () => {
       type: "actions",
       headerName: "Ações",
       width: 100,
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              key="save"
-              icon={<SaveIcon />}
-              label="Salvar"
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              key="cancel"
-              icon={<CancelIcon />}
-              label="Cancelar"
-              onClick={handleCancelClick(id)}
-            />,
-          ];
-        }
-
+      cellClassName: "actions",
+      getActions: ({ row }) => {
         return [
           <GridActionsCellItem
-            key="edit"
-            icon={<EditIcon />}
-            label="Editar"
-            onClick={handleEditClick(id)}
+            key={`view-${row.CODE}`}
+            icon={<VisibilityIcon />}
+            label="Visualizar"
+            onClick={handleViewClick(row)}
+            showInMenu={false}
           />,
         ];
       },
@@ -119,7 +88,7 @@ const TableCompor90 = () => {
   return (
     <Card>
       <MDBox p={2}>
-        <Typography variant="h6">Lista de Compor90</Typography>
+        <Typography variant="h6">Lista do Primavera</Typography>
         <MDBox display="flex" gap={2} my={2}>
           <TextField
             label="Filtrar por Nome"
@@ -153,8 +122,38 @@ const TableCompor90 = () => {
         />
         {error && <Typography color="error">{error}</Typography>}
       </MDBox>
+      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
+        <DialogTitle>
+          Detalhes do Produto
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseDialog}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          {selectedProduct && (
+            <DialogContentText component="div">
+              <strong>Id:</strong> {selectedProduct.CODE} <br />
+              <strong>Usuario:</strong> {selectedProduct.USUARIO} <br />
+              <strong>Senha:</strong> {selectedProduct.SENHA} <br />
+              <strong>Base:</strong> {selectedProduct.BASE} <br />
+            </DialogContentText>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Fechar</Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 };
 
-export default TableCompor90;
+export default TablePrimavera;

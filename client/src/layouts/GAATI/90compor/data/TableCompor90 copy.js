@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridRowModes, GridActionsCellItem } from "@mui/x-data-grid";
-import { TextField, Typography, Card } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import CancelIcon from "@mui/icons-material/Close";
-import { apiCompor90 } from "../../../../service/apiGAATI";
+import { TextField, Typography, Button, Card } from "@mui/material";
 import MDBox from "../../../../components/MDBox";
+
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+//API PRIMAVERA
+import { apiCompor90 } from "../../../../service/apiGAATI";
 
 const TableCompor90 = () => {
   const [rows, setRows] = useState([]);
@@ -15,7 +21,8 @@ const TableCompor90 = () => {
   const [searchBase, setSearchBase] = useState("");
   const [editingRowId, setEditingRowId] = useState(null);
   const [error, setError] = useState(null);
-
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   useEffect(() => {
     const fetchRows = async () => {
       try {
@@ -68,6 +75,16 @@ const TableCompor90 = () => {
     }
   };
 
+  const handleViewClick = (product) => () => {
+    setSelectedProduct(product);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedProduct(null);
+  };
+
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.CODE === newRow.CODE ? updatedRow : row)));
@@ -80,31 +97,15 @@ const TableCompor90 = () => {
       type: "actions",
       headerName: "Ações",
       width: 100,
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              key="save"
-              icon={<SaveIcon />}
-              label="Salvar"
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              key="cancel"
-              icon={<CancelIcon />}
-              label="Cancelar"
-              onClick={handleCancelClick(id)}
-            />,
-          ];
-        }
-
+      cellClassName: "actions",
+      getActions: ({ row }) => {
         return [
           <GridActionsCellItem
-            key="edit"
-            icon={<EditIcon />}
-            label="Editar"
-            onClick={handleEditClick(id)}
+            key={`view-${row.CODE}`}
+            icon={<VisibilityIcon />}
+            label="Visualizar"
+            onClick={handleViewClick(row)}
+            showInMenu={false}
           />,
         ];
       },
@@ -152,6 +153,36 @@ const TableCompor90 = () => {
         />
         {error && <Typography color="error">{error}</Typography>}
       </MDBox>
+      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
+        <DialogTitle>
+          Detalhes do Produto
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseDialog}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          {selectedProduct && (
+            <DialogContentText component="div">
+              <strong>Id:</strong> {selectedProduct.CODE} <br />
+              <strong>Nome:</strong> {selectedProduct.NOME} <br />
+              <strong>Senha:</strong> {selectedProduct.SENHA} <br />
+              <strong>Base:</strong> {selectedProduct.BASE} <br />
+            </DialogContentText>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Fechar</Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 };

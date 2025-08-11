@@ -152,15 +152,6 @@ const routes = [
         route: "/password-generator",
         component: <Senhavpn />,
       },
-      {
-        type: "collapse",
-        name: "Consultar",
-        key: "Consultar",
-        roles: ["admin"],
-        icon: <Icon fontSize="small">search</Icon>,
-        route: "/consultar",
-        component: <Consultar />,
-      },
     ],
   },
   {

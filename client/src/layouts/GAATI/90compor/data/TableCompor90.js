@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridRowModes, GridActionsCellItem } from "@mui/x-data-grid";
-import { apiCompor90 } from "../../../../service/apiGAATI";
 import { TextField, Typography, Button, Card } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import CancelIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
 import AddProduct from "../components/Add90Compor/index"; // Import the AddProduct form
 import MDBox from "../../../../components/MDBox";
+
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+//API PRIMAVERA
+import { apiCompor90 } from "../../../../service/apiGAATI";
 
 const ListProducts = () => {
   const [rows, setRows] = useState([]);
@@ -90,42 +95,16 @@ const ListProducts = () => {
       field: "actions",
       type: "actions",
       headerName: "Ações",
-      width: 90,
+      width: 100,
       cellClassName: "actions",
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              key={`save-${id}`}
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{ color: "#009B77" }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              key={`cancel-${id}`}
-              icon={<CancelIcon />}
-              label="Cancel"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
+      getActions: ({ row }) => {
         return [
           <GridActionsCellItem
-            key={`edit-${id}`}
-            icon={<EditIcon />}
-            label="Edit"
-            onClick={handleEditClick(id)}
-            disabled={editingRowId !== null}
-          />,
-          <GridActionsCellItem
-            key={`delete-${id}`}
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
+            key={`view-${row.CODE}`}
+            icon={<VisibilityIcon />}
+            label="Visualizar"
+            onClick={handleViewClick(row)}
+            showInMenu={false}
           />,
         ];
       },
@@ -191,6 +170,36 @@ const ListProducts = () => {
           }}
         />
       </MDBox>
+      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
+        <DialogTitle>
+          Detalhes do Produto
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseDialog}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          {selectedProduct && (
+            <DialogContentText component="div">
+              <strong>Id:</strong> {selectedProduct.CODE} <br />
+              <strong>Usuario:</strong> {selectedProduct.USUARIO} <br />
+              <strong>Senha:</strong> {selectedProduct.SENHA} <br />
+              <strong>Base:</strong> {selectedProduct.BASE} <br />
+            </DialogContentText>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Fechar</Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 };

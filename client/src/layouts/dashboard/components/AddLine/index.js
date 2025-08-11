@@ -38,6 +38,7 @@ const AddProduct = ({ onProductAdd }) => {
   const [responsible, setResponsible] = useState("");
   const [operator, setOperator] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [iccid, setIccid] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
@@ -83,6 +84,7 @@ const AddProduct = ({ onProductAdd }) => {
         destiwork: product.obraVinculada,
         operator,
         phoneNumber: cleanPhoneNumber,
+        iccid,
         date,
         category,
       });
@@ -91,6 +93,7 @@ const AddProduct = ({ onProductAdd }) => {
       setResponsible("");
       setOperator("");
       setPhoneNumber("");
+      setIccid("");
       setDate("");
       setCategory("");
       setPhoneError("");
@@ -176,6 +179,19 @@ const AddProduct = ({ onProductAdd }) => {
                 onChange={handlePhoneNumberChange}
                 error={Boolean(phoneError)}
                 helperText={phoneError}
+                required
+              />
+            </Grid>
+            <Grid item>
+              <MDInput
+                label="ICCID"
+                fullWidth
+                value={iccid}
+                onChange={(e) => {
+                  const onlyNumbers = e.target.value.replace(/\D/g, "").slice(0, 22);
+                  setIccid(onlyNumbers);
+                }}
+                inputProps={{ inputMode: "numeric", pattern: "[0-9]*", maxLength: 22 }}
                 required
               />
             </Grid>

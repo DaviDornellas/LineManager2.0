@@ -19,6 +19,7 @@
     "@mui/icons-material": "5.11.16",
     "@mui/material": "5.12.3",
     "@mui/x-data-grid": "^7.27.0",
+    "@mui/x-data-grid-generator": "^8.5.2",
     "@sequelize/sqlite3": "^7.0.0-alpha.46",
     "axios": "^1.7.9",
     "bcryptjs": "^3.0.2",

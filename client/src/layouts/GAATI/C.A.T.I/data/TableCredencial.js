@@ -44,11 +44,15 @@ const Tablecredencial = () => {
     setEditingRowId(id);
   };
 
-  const handleSaveClick = (id) => async () => {
-    const updatedRow = rows.find((row) => row.Code === id);
+  const handleSaveClick = (Code) => async () => {
+    const updatedRow = rows.find((row) => row.Code === Code);
     try {
-      await apiCredencial.put(`/${id}`, updatedRow);
-      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+      await apiCredencial.put(`/credencial/${Code}`, {
+        Nome: updatedRow.Nome,
+        Office: updatedRow.Office,
+        Chamado: updatedRow.Chamado,
+      });
+      setRowModesModel({ ...rowModesModel, [Code]: { mode: GridRowModes.View } });
       setEditingRowId(null);
     } catch (error) {
       console.error("Erro ao salvar dados:", error);
@@ -73,6 +77,10 @@ const Tablecredencial = () => {
   };
 
   const processRowUpdate = (newRow) => {
+    if (editingRowId !== null && editingRowId !== newRow.Code) {
+      return rows.find((row) => row.Code === newRow.Code);
+    }
+
     const updatedRow = { ...newRow, isNew: false };
     setRows(rows.map((row) => (row.Code === newRow.Code ? updatedRow : row)));
     return updatedRow;
@@ -86,6 +94,8 @@ const Tablecredencial = () => {
       width: 100,
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+        // Só permite editar se nenhuma linha estiver sendo editada ou se for a mesma linha
         if (isInEditMode) {
           return [
             <GridActionsCellItem
@@ -93,12 +103,14 @@ const Tablecredencial = () => {
               icon={<SaveIcon />}
               label="Salvar"
               onClick={handleSaveClick(id)}
+              disabled={editingRowId !== id}
             />,
             <GridActionsCellItem
               key="cancel"
               icon={<CancelIcon />}
               label="Cancelar"
               onClick={handleCancelClick(id)}
+              disabled={editingRowId !== id}
             />,
           ];
         }
@@ -109,13 +121,14 @@ const Tablecredencial = () => {
             icon={<EditIcon />}
             label="Editar"
             onClick={handleEditClick(id)}
+            disabled={editingRowId !== null && editingRowId !== id}
           />,
         ];
       },
     },
     { field: "Code", headerName: "Código", width: 100, editable: false },
     { field: "Nome", headerName: "Nome", flex: 1, editable: true },
-    { field: "Usu_Rede", headerName: "Usuário", flex: 1, editable: true },
+    { field: "Usu_Rede", headerName: "Usuário", flex: 1, editable: false },
     { field: "Office", headerName: "Office", flex: 0.5, editable: true },
     { field: "Chamado", headerName: "Chamado", flex: 1, editable: true },
     {
